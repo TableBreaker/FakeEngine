@@ -6,6 +6,10 @@ namespace SharpRender
 {
     class Graphic
     {
+        public bool Render()
+        {
 
+            return true;
+        }
     }
 }
