@@ -15,18 +15,33 @@ namespace SharpRender
         public SharpForm()
         {
             InitializeComponent();
+            InitGraphic();
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            Bitmap myBitmap = new Bitmap(700, 700);
-            for (var x = 0; x < 100; x++)
-                for (var y = 0; y < 100; y++)
-                {
-                    myBitmap.SetPixel(x, y, Color.Red);
-                }
-            e.Graphics.DrawImage(myBitmap, 0, 0);
+            RenderScene();
         }
+
+        private void InitGraphic()
+        {
+            _graphic = new Graphic();
+            _graphic.Initialize();
+        }
+
+        private void RenderScene()
+        {
+            if (_graphic == null)
+                return;
+
+            if (_graphic.RenderToBuffer())
+            {
+
+            }
+        }
+
+        private Graphic _graphic;
+        private Bitmap _texture;
     }
 }
