@@ -11,6 +11,11 @@ namespace SharpRender.Math
             x = x_; y = y_; z = z_;
         }
 
+        public static implicit operator Vector3(Vector4 v)
+        {
+            return new Vector3(v.x, v.y, v.z);
+        }
+
         public float x, y, z;
     }
 }
