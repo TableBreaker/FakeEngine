@@ -24,6 +24,12 @@ namespace SharpRender
             RenderScene();
         }
 
+        protected override void OnResizeEnd(EventArgs e)
+        {
+            base.OnResizeEnd(e);
+
+        }
+
         private void InitGraphic()
         {
             _graphic = new Graphic();
