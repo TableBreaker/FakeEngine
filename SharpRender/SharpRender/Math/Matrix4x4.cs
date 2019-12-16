@@ -82,6 +82,15 @@ namespace SharpRender.Math
                 m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33 * v.w);
         }
 
+        public static Matrix4x4 operator /(Matrix4x4 m, float c)
+        {
+            return new Matrix4x4(
+                m.m00 / c, m.m01 / c, m.m02 / c, m.m03 / c,
+                m.m10 / c, m.m11 / c, m.m12 / c, m.m13 / c,
+                m.m20 / c, m.m21 / c, m.m22 / c, m.m23 / c,
+                m.m30 / c, m.m31 / c, m.m32 / c, m.m33 / c);
+        }
+
         public static bool operator == (Matrix4x4 a, Matrix4x4 b)
         {
             return a.m00 == b.m00 && a.m01 == b.m01 && a.m02 == b.m02 && a.m03 == b.m03 &&
