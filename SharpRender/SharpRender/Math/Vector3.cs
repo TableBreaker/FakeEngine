@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SharpRender.Math
+namespace SharpRender.Mathematics
 {
     struct Vector3
     {
@@ -72,6 +72,14 @@ namespace SharpRender.Math
         public override int GetHashCode()
         {
             return HashCode.Combine(x, y, z);
+        }
+
+        public float Magnitude
+        {
+            get
+            {
+                return 
+            }
         }
 
         public float x, y, z;

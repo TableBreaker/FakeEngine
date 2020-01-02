@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using SharpRender.Math;
+using SharpRender.Mathematics;
 
 namespace SharpRender.Renderer
 {
@@ -18,9 +18,20 @@ namespace SharpRender.Renderer
             return default;
         }
 
+        private void UpdateVectors()
+        {
+
+        }
+
         public Vector3 front;
-        public float near;
-        public float far;
-        public float fieldOfView;
+        public Vector3 up;
+        public Vector3 right;
+
+        private float near;
+        private float far;
+        private float fieldOfView;
+        private int viewportX;
+        private int viewportY;
+        private bool perspective;
     }
 }

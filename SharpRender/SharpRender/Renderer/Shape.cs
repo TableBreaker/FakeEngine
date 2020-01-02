@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using SharpRender.Math;
+using SharpRender.Mathematics;
 
 namespace SharpRender.Renderer
 {

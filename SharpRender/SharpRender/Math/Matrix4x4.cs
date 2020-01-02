@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SharpRender.Math
+namespace SharpRender.Mathematics
 {
     struct Matrix4x4
     {

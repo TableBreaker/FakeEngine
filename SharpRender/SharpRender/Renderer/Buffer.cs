@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using SharpRender.Math;
+using SharpRender.Mathematics;
 
 namespace SharpRender.Renderer
 {
-    partial class RenderBuffer
+    class RenderBuffer
     {
         public static RenderBuffer NewBuffer(int width_, int height_)
         {
@@ -14,10 +14,7 @@ namespace SharpRender.Renderer
         }
 
         private static int _counter = 0;
-    }
 
-    partial class RenderBuffer
-    {
         public int id;
         public int width;
         public int height;
