@@ -9,7 +9,7 @@ namespace SharpRender.Renderer
     {
         #region Drawer
         // Draws a line using the Bresenham's algorithm with Z-testing.
-        private void DrawLine(Vector3 from, Vector3 to)
+        private void DrawLine(Vector3 from, Vector3 to, Vector3 color)
         {
 			int x = (int)from.x, y = (int)from.y;
 
@@ -31,7 +31,7 @@ namespace SharpRender.Renderer
 				// calculate z-value in pixel
 				float t = (new Vector3(x, y, 0f) - new Vector3(from.x, from.y, 0f)).Magnitude / (new Vector3(to.x, to.y, 0f) - new Vector3(from.x, from.y, 0f)).Magnitude;
 				float z = (1 - t) * from.z + t * to.z;
-				DrawPoint(x, y, z, isSelectedObject ? selectedBrush : wfBrush);
+				DrawPoint(x, y, z, color);
 
 				// determine if need to change the direction
 				while (e >= 0)
@@ -61,18 +61,21 @@ namespace SharpRender.Renderer
 
 		public void DrawPoint(int x, int y, float z, Vector4 color)
 		{
-			if (x >= 0 && x < viewportX && y >= 0 && y < viewportY && z > (perspective ? 0 : -1) && z < 1)
+			if (x >= 0 && x < ViewportX && y >= 0 && y < ViewportY && z > (mainCamera.Mode == ECameraProjection.Perspective ? 0 : -1) && z < 1)
 			{
 				// z test
-				if (z < zbuffer[x, y])
+				if (z < buffer.GetDepth(x, y))
 				{
-					zbuffer[x, y] = z;
-					graphics->FillRectangle(br, x, y, 1, 1);
+					buffer.SetDepth(x, y, z);
+					buffer.SetColor(x, y, color);
 				}
 			}
 		}
 		#endregion
 
+
+		public int ViewportX { get; set; }
+		public int ViewportY { get; set; }
 
 		private Camera mainCamera;
 		private RenderBuffer buffer;

@@ -75,6 +75,14 @@ namespace SharpRender.Mathematics
             return HashCode.Combine(x, y, z, w);
         }
 
+        public float Magnitude
+        {
+            get
+            {
+                return MathUtility.Magnitude(x, y, z, w);
+            }
+        }
+
         public float x, y, z, w;
     }
 }

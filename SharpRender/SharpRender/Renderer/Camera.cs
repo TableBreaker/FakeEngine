@@ -27,11 +27,9 @@ namespace SharpRender.Renderer
         public Vector3 up;
         public Vector3 right;
 
-        private float near;
-        private float far;
-        private float fieldOfView;
-        private int viewportX;
-        private int viewportY;
-        private bool perspective;
+        public float Near { get; private set; }
+        public float Far { get; private set; }
+        public float FieldOfView { get; private set; }
+        public ECameraProjection Mode { get; private set; }
     }
 }
