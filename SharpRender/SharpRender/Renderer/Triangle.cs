@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using SharpRender.Mathematics;
 
-namespace SharpRender.Renderer
+namespace SharpRender.Render
 {
     class Triangle
     {

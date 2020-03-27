@@ -35,16 +35,9 @@ namespace SharpRender
             if (_graphic == null)
                 return;
 
-            if (_graphic.RenderToBuffer())
+            if (_graphic.Render())
             {
-                var buffer = _graphic.GetBuffer();
-                for (var y = 0; y < buffer.height; y++)
-                    for (var x = 0; x < buffer.width; x++)
-                    {
-                        //var color = buffer.GetColor(x, y);
-                        //_brush.Color = Color.FromArgb((int)(color.x * 255), (int)(color.y * 255), (int)(color.z * 255));
-                        graphics.FillRectangle(_brush, x, y, 1, 1);
-                    }
+                
             }
         }
 

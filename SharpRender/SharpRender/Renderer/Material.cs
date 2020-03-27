@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SharpRender.Renderer
+namespace SharpRender.Render
 {
     class Material
     {
