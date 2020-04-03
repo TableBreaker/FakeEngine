@@ -26,5 +26,12 @@ namespace SharpRender.Mathematics
             left = right;
             right = temp;
         }
+
+        public static Vector3 Normal(Vector3 a, Vector3 b, Vector3 c)
+        {
+            var t1 = b - a;
+            var t2 = c - a;
+            return t1.Cross(t2).normalized;
+        }
     }
 }

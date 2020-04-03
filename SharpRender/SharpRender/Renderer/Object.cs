@@ -9,7 +9,10 @@ namespace SharpRender.Render
     {
         public Object(Vector3[] vectices_, Vector4[] colors_, Vector3[] indices_)
         {
-            
+            for (var i = 0; i < indices_.Length; i++)
+            {
+
+            }
         }
         
         public Vector3 position { get; set; }

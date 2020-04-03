@@ -11,14 +11,24 @@ namespace SharpRender.Mathematics
             x = x_; y = y_; z = z_;
         }
 
+        public float Dot(Vector3 v)
+        {
+            return Dot(this, v);
+        }
+
         public static float Dot(Vector3 a, Vector3 b)
         {
             return a.x * b.x + a.y * b.y + a.z * b.z;
         }
 
+        public Vector3 Cross(Vector3 v)
+        {
+            return Cross(this, v);
+        }
+
         public static Vector3 Cross(Vector3 a, Vector3 b)
         {
-            return default;
+            return new Vector3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
         }
 
         public static Vector3 operator +(Vector3 a, Vector3 b)
@@ -81,6 +91,18 @@ namespace SharpRender.Mathematics
                 return MathUtility.Magnitude(x, y, z);
             }
         }
+
+        public Vector3 normalized
+        {
+            get
+            {
+                var mag = Magnitude;
+                return this / (mag == 0f ? 1f : mag);
+            }
+        }
+
+        public static readonly Vector3 One = new Vector3(1f, 1f, 1f);
+        public static readonly Vector3 Zero = new Vector3(0f, 0f, 0f);
 
         public float x, y, z;
     }
