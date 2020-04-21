@@ -11,6 +11,17 @@ namespace SharpRender.Mathematics
             x = x_; y = y_; z = z_; w = w_;
         }
 
+        public Vector4(float[] vec)
+        {
+            if (vec.Length != dimension)
+                throw new ArgumentException("Vector4 must have 4 elements");
+
+            x = vec[0];
+            y = vec[1];
+            z = vec[2];
+            w = vec[3];
+        }
+
         public float Dot(Vector4 v)
         {
             return Dot(this, v);
@@ -111,5 +122,6 @@ namespace SharpRender.Mathematics
         public static readonly Vector4 Zero = new Vector4(0f, 0f, 0f, 0f);
 
         public float x, y, z, w;
+        public const int dimension = 4;
     }
 }

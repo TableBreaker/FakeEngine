@@ -1,58 +1,116 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Net.WebSockets;
 
 namespace SharpRender.Mathematics
 {
-    struct Matrix3x3
+    sealed class Matrix3x3
     {
-        public Matrix3x3(float a00, float a01, float a02,
-                         float a10, float a11, float a12,
-                         float a20, float a21, float a22)
+        public Matrix3x3()
         {
-            m00 = a00; m01 = a01; m02 = a02;
-            m10 = a10; m11 = a11; m12 = a12;
-            m20 = a20; m21 = a21; m22 = a22;
+            values = new float[]
+            {
+                1, 0, 0,
+                0, 1, 0,
+                0, 0, 1,
+            };
+        }
+
+        public Matrix3x3(float[] values_)
+        {
+            if (values_.Length != dimension * dimension)
+                throw new ArgumentException("Matrix3x3 must have 9 elements");
+
+            values = values_;
+        }
+
+        public float Get(int row, int col)
+        {
+            if (row < 0 || row >= dimension || col < 0 || col >= dimension)
+                throw new ArgumentException("Coordinates ar invalid");
+
+            return values[row * dimension + col];
+        }
+
+        public void Set(int row, int col, float val)
+        {
+            if (row < 0 || row >= dimension || col < 0 || col >= dimension)
+                throw new ArgumentException("Corrdinates are invalid");
+
+            values[row * dimension + col] = val;
+        }
+
+        public Vector3 GetRow(int row)
+        {
+            if (row < 0 || row >= dimension)
+                throw new ArgumentException("Row number is invalid");
+
+            return new Vector3(Get(row, 0), Get(row, 1), Get(row, 2));
+        }
+
+        public Vector3 GetColumn(int col)
+        {
+            if (col < 0 || col >= dimension)
+                throw new ArgumentException("Col number is invalid");
+
+            return new Vector3(Get(0, col), Get(1, col), Get(2, col));
+        }
+
+        public float Determinant()
+        {
+            var minor1 = Get(1, 1) * Get(2, 2) - Get(1, 2) * Get(2, 1);
+            var minor2 = Get(1, 0) * Get(2, 2) - Get(1, 2) * Get(2, 0);
+            var minor3 = Get(1, 0) * Get(2, 1) - Get(1, 1) * Get(2, 0);
+
+            return Get(0, 0) * minor1 - Get(0, 1) * minor2 + Get(0, 2) * minor3;
+        }
+
+        public Matrix3x3 Transposed()
+        {
+            var newValues = new float[dimension * dimension];
+            for (var i = 0; i < newValues.Length; i++)
+            {
+                newValues[i] = Get(i % dimension, i / dimension);
+            }
+            return new Matrix3x3(newValues);
         }
 
         public static Matrix3x3 operator +(Matrix3x3 a, Matrix3x3 b)
         {
-            return new Matrix3x3(
-                a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02,
-                a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12,
-                a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22);
+            var m = new Matrix3x3();
+            for (var i = 0; i < dimension; i++)
+                m.values[i] = a.values[i] + b.values[i];
+
+            return m;
         }
 
         public static Matrix3x3 operator -(Matrix3x3 a, Matrix3x3 b)
         {
-            return new Matrix3x3(
-                a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02,
-                a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12,
-                a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22);
+            var m = new Matrix3x3();
+            for (var i = 0; i < m.values.Length; i++)
+                m.values[i] = a.values[i] - b.values[i];
+            
+            return m;
         }
 
         public static Matrix3x3 operator *(Matrix3x3 a, Matrix3x3 b)
         {
-            return new Matrix3x3(
-                a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20, 
-                a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21, 
-                a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22,
+            var newValues = new float[dimension * dimension];
+            for (var i = 0; i < dimension; i++)
+                for (var j = 0; j < dimension; j++)
+                {
+                    newValues[i * dimension + j] = a.GetRow(i).Dot(b.GetColumn(j));
+                }
 
-                a.m10 * b.m00 + a.m11 * b.m10 + a.m12 * b.m20,
-                a.m10 * b.m01 + a.m11 * b.m11 + a.m12 * b.m21,
-                a.m10 * b.m02 + a.m11 * b.m12 + a.m12 * b.m22,
-
-                a.m20 * b.m00 + a.m21 * b.m10 + a.m22 * b.m20,
-                a.m20 * b.m01 + a.m21 * b.m11 + a.m22 * b.m21,
-                a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22);
+            return new Matrix3x3(newValues);
         }
 
         public static Matrix3x3 operator *(Matrix3x3 m, float c)
         {
-            return new Matrix3x3(
-                m.m00 * c, m.m01 * c, m.m02 * c,
-                m.m10 * c, m.m11 * c, m.m12 * c,
-                m.m20 * c, m.m21 * c, m.m22 * c);
+            var newValues = new float[dimension * dimension];
+            for (var i = 0; i < newValues.Length; i++)
+                newValues[i] = m.values[i] * c;
+
+            return new Matrix3x3(newValues);
         }
 
         public static Matrix3x3 operator *(float c, Matrix3x3 m)
@@ -62,33 +120,21 @@ namespace SharpRender.Mathematics
 
         public static Vector3 operator *(Matrix3x3 m, Vector3 v)
         {
-            return new Vector3(
-                m.m00 * v.x + m.m01 * v.y + m.m02 * v.z,
-                m.m10 * v.x + m.m11 * v.y + m.m12 * v.z,
-                m.m20 * v.x + m.m21 * v.y + m.m22 * v.z);
-        }
+            var newVec = new float[dimension];
+            for (var i = 0; i < dimension; i++)
+                newVec[i] = m.GetRow(i).Dot(v);
 
-        public static Matrix3x3 operator /(Matrix3x3 m, float c)
-        {
-            return new Matrix3x3(
-                m.m00 / c, m.m01 / c, m.m02 / c,
-                m.m10 / c, m.m11 / c, m.m12 / c,
-                m.m20 / c, m.m21 / c, m.m22 / c);
-        }
-
-        public static implicit operator Matrix3x3(Matrix4x4 m)
-        {
-            return new Matrix3x3(
-                m.m00, m.m01, m.m02,
-                m.m10, m.m11, m.m12,
-                m.m20, m.m21, m.m22);
+            return new Vector3(newVec);
         }
 
         public static bool operator == (Matrix3x3 a, Matrix3x3 b)
         {
-            return a.m00 == b.m00 && a.m01 == b.m01 && a.m02 == b.m02 &&
-                    a.m10 == b.m10 && a.m11 == b.m11 && a.m12 == b.m12 &&
-                    a.m20 == b.m20 && a.m21 == b.m21 && a.m22 == b.m22;
+            var equal = true;
+            for (var i = 0; i < dimension; i++)
+                for (var j = 0; j < dimension; j++)
+                    equal &= a.Get(i, j) == b.Get(i, j);
+
+            return equal;
         }
 
         public static bool operator != (Matrix3x3 a, Matrix3x3 b)
@@ -106,13 +152,10 @@ namespace SharpRender.Mathematics
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(HashCode.Combine(m00, m01, m02),
-                                    HashCode.Combine(m10, m11, m12),
-                                    HashCode.Combine(m20, m21, m22));
+            return HashCode.Combine(values);
         }
 
-        public float m00, m01, m02,
-                     m10, m11, m12,
-                     m20, m21, m22;
+        public float[] values;
+        public const int dimension = 3;
     }
 }

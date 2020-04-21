@@ -1,71 +1,137 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Windows.Forms;
 
 namespace SharpRender.Mathematics
 {
-    struct Matrix4x4
+    sealed class Matrix4x4
     {
-        public Matrix4x4(float a00, float a01, float a02, float a03,
-                         float a10, float a11, float a12, float a13,
-                         float a20, float a21, float a22, float a23,
-                         float a30, float a31, float a32, float a33)
+        public Matrix4x4()
         {
-            m00 = a00; m01 = a01; m02 = a02; m03 = a03;
-            m10 = a10; m11 = a11; m12 = a12; m13 = a13;
-            m20 = a20; m21 = a21; m22 = a22; m23 = a23;
-            m30 = a30; m31 = a31; m32 = a32; m33 = a33;
+            values = new float[]
+            {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1,
+            };
+        }
+
+        public Matrix4x4(float[] values_)
+        {
+            if (values_.Length != dimension * dimension)
+                throw new ArgumentException("Matrix4x4 must have 16 elements");
+
+            values = values_;
+        }
+
+        public float Get(int row, int col)
+        {
+            if (row < 0 || row >= dimension || col < 0 || col >= dimension)
+                throw new ArgumentException("Coordinates are invalid");
+
+            return values[row * dimension + col];
+        }
+
+        public void Set(int row, int col, float val)
+        {
+            if (row < 0 || row >= dimension || col < 0 || col >= dimension)
+                throw new ArgumentException("Coordinates are invalid");
+
+            values[row * dimension + col] = val;
+        }
+
+        public Vector4 GetRow(int row)
+        {
+            if (row < 0 || row >= dimension)
+                throw new ArgumentException("Row number is invalid");
+
+            return new Vector4(Get(row, 0), Get(row, 1), Get(row, 2), Get(row, 3));
+        }
+
+        public Vector4 GetColumn(int col)
+        {
+            if (col < 0 || col >= dimension)
+                throw new ArgumentException("Col number is invalid");
+
+            return new Vector4(Get(0, col), Get(1, col), Get(2, col), Get(3, col));
+        }
+
+        private float Minor(int row, int col)
+        {
+            Matrix3x3 sub = new Matrix3x3();
+            for (var i = 0; i < dimension; i++)
+                for (var j = 0; j < dimension; j++)
+                {
+                    if (i != row && j != col)
+                    {
+                        int r = i < row ? i : i - 1;
+                        int c = j < col ? j : j - 1;
+                        sub.Set(r, c, Get(i, j));
+                    }
+                }
+
+            return sub.Determinant();
+        }
+
+        public float Determinant()
+        {
+            return Get(0, 0) * Minor(0, 0) - Get(0, 1) * Minor(0, 1) + Get(0, 2) * Minor(0, 2) - Get(0, 3) * Minor(0, 3);
+        }
+
+        public Matrix4x4 Inverted()
+        {
+            var det = Determinant();
+            if (det == 0f)
+                throw new ArgumentException("The determinant is zero");
+
+            Matrix4x4 inv = new Matrix4x4();
+            for (var i = 0; i < dimension; i++)
+                for (var j = 0; j < dimension; j++)
+                {
+                    int sign = (i + j) % 2 == 0 ? 1 : -1;
+                    inv.Set(j, i, sign * Minor(i, j));
+                }
+
+            return inv * (1f / det);
         }
 
         public static Matrix4x4 operator + (Matrix4x4 a, Matrix4x4 b)
         {
-            return new Matrix4x4(
-                a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02, a.m03 + b.m03,
-                a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12, a.m13 + b.m13,
-                a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22, a.m23 + b.m23,
-                a.m30 + b.m30, a.m31 + b.m31, a.m32 + b.m32, a.m33 + b.m33);
+            var m = new Matrix4x4();
+            for (var i = 0; i < dimension; i++)               
+                m.values[i] = a.values[i] + b.values[i];
+            
+            return m;
         }
 
         public static Matrix4x4 operator - (Matrix4x4 a, Matrix4x4 b)
         {
-            return new Matrix4x4(
-                a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02, a.m03 - b.m03,
-                a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12, a.m13 - b.m13,
-                a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22, a.m23 - b.m23,
-                a.m30 - b.m30, a.m31 - b.m31, a.m32 - b.m32, a.m33 - b.m33);
+            var m = new Matrix4x4();
+            for (var i = 0; i < m.values.Length; i++)
+                m.values[i] = a.values[i] - b.values[i];
+
+            return m;
         }
 
         public static Matrix4x4 operator * (Matrix4x4 a, Matrix4x4 b)
         {
-            return new Matrix4x4(
-                a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03 * b.m30,
-                a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21 + a.m03 * b.m31,
-                a.m00 * b.m02 + a.m01 * b.m12 + a.m02 * b.m22 + a.m03 * b.m32,
-                a.m00 * b.m03 + a.m01 * b.m13 + a.m02 * b.m23 + a.m03 * b.m33,
+            var newValues = new float[dimension * dimension];
+            for (var i = 0; i < dimension; i++)
+                for (var j = 0; j < dimension; j++)
+                {
+                    newValues[i * dimension + j] = a.GetRow(i).Dot(b.GetColumn(j));
+                }
 
-                a.m10 * b.m00 + a.m11 * b.m10 + a.m12 * b.m20 + a.m13 * b.m30,
-                a.m10 * b.m01 + a.m11 * b.m11 + a.m12 * b.m21 + a.m13 * b.m31,
-                a.m10 * b.m02 + a.m11 * b.m12 + a.m12 * b.m22 + a.m13 * b.m32,
-                a.m10 * b.m03 + a.m11 * b.m13 + a.m12 * b.m23 + a.m13 * b.m33,
-
-                a.m20 * b.m00 + a.m21 * b.m10 + a.m22 * b.m20 + a.m23 * b.m30,
-                a.m20 * b.m01 + a.m21 * b.m11 + a.m22 * b.m21 + a.m23 * b.m31,
-                a.m20 * b.m02 + a.m21 * b.m12 + a.m22 * b.m22 + a.m23 * b.m32,
-                a.m20 * b.m03 + a.m21 * b.m13 + a.m22 * b.m23 + a.m23 * b.m33,
-                
-                a.m30 * b.m00 + a.m31 * b.m10 + a.m32 * b.m20 + a.m33 * b.m30,
-                a.m30 * b.m01 + a.m31 * b.m11 + a.m32 * b.m21 + a.m33 * b.m31,
-                a.m30 * b.m02 + a.m31 * b.m12 + a.m32 * b.m22 + a.m33 * b.m32,
-                a.m30 * b.m03 + a.m31 * b.m13 + a.m32 * b.m23 + a.m33 * b.m33);
+            return new Matrix4x4(newValues);
         }
 
         public static Matrix4x4 operator * (Matrix4x4 m, float c)
         {
-            return new Matrix4x4(
-                m.m00 * c, m.m01 * c, m.m02 * c, m.m03 * c,
-                m.m10 * c, m.m11 * c, m.m12 * c, m.m13 * c,
-                m.m20 * c, m.m21 * c, m.m22 * c, m.m23 * c,
-                m.m30 * c, m.m31 * c, m.m32 * c, m.m33 * c);
+            var newValues = new float[dimension * dimension];
+            for (var i = 0; i < newValues.Length; i++)
+                newValues[i] = m.values[i] * c;
+
+            return new Matrix4x4(newValues);
         }
 
         public static Matrix4x4 operator *(float c, Matrix4x4 m)
@@ -75,28 +141,21 @@ namespace SharpRender.Mathematics
 
         public static Vector4 operator * (Matrix4x4 m, Vector4 v)
         {
-            return new Vector4(
-                m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03 * v.w,
-                m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13 * v.w,
-                m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m23 * v.w,
-                m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33 * v.w);
-        }
+            var newVec = new float[dimension];
+            for (var i = 0; i < dimension; i++)
+                newVec[i] = m.GetRow(i).Dot(v);
 
-        public static Matrix4x4 operator /(Matrix4x4 m, float c)
-        {
-            return new Matrix4x4(
-                m.m00 / c, m.m01 / c, m.m02 / c, m.m03 / c,
-                m.m10 / c, m.m11 / c, m.m12 / c, m.m13 / c,
-                m.m20 / c, m.m21 / c, m.m22 / c, m.m23 / c,
-                m.m30 / c, m.m31 / c, m.m32 / c, m.m33 / c);
+            return new Vector4(newVec);
         }
 
         public static bool operator == (Matrix4x4 a, Matrix4x4 b)
         {
-            return a.m00 == b.m00 && a.m01 == b.m01 && a.m02 == b.m02 && a.m03 == b.m03 &&
-                a.m10 == b.m10 && a.m11 == b.m11 && a.m12 == b.m12 && a.m13 == b.m13 &&
-                a.m20 == b.m20 && a.m21 == b.m21 && a.m22 == b.m22 && a.m23 == b.m23 &&
-                a.m30 == b.m30 && a.m31 == b.m31 && a.m32 == b.m32 && a.m33 == b.m33;
+            var equal = true;
+            for (var i = 0; i < dimension; i++)
+                for (var j = 0; j < dimension; j++)
+                    equal &= a.Get(i, j) == b.Get(i, j);
+
+            return equal;
         }
 
         public static bool operator != (Matrix4x4 a, Matrix4x4 b)
@@ -104,34 +163,30 @@ namespace SharpRender.Mathematics
             return !(a == b);
         }
 
-        public static implicit operator Matrix4x4(Matrix3x3 m)
+        public static implicit operator Matrix3x3(Matrix4x4 m)
         {
-            return new Matrix4x4(
-                m.m00, m.m01, m.m02, 1f,
-                m.m10, m.m11, m.m12, 1f,
-                m.m20, m.m21, m.m22, 1f,
-                1f, 1f, 1f, 1f);
+            return new Matrix3x3(new float[]
+            {
+                m.Get(0, 0), m.Get(0, 1), m.Get(0, 2),
+                m.Get(1, 0), m.Get(1, 1), m.Get(1, 2),
+                m.Get(2, 0), m.Get(2, 1), m.Get(2, 2),
+            });
         }
 
-        public override bool Equals(object other)
+        public override bool Equals(object obj)
         {
-            if (other == null || !(other is Matrix4x4))
+            if (obj == null || !(obj is Matrix4x4))
                 return false;
 
-            return this == (Matrix4x4)other;
+            return this == (Matrix4x4)obj;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(HashCode.Combine(m00, m01, m02, m03),
-                                    HashCode.Combine(m10, m11, m12, m13),
-                                    HashCode.Combine(m20, m21, m22, m23),
-                                    HashCode.Combine(m30, m31, m32, m33));
+            return HashCode.Combine(values);
         }
 
-        public float m00, m01, m02, m03,
-                     m10, m11, m12, m13,
-                     m20, m21, m22, m23,
-                     m30, m31, m32, m33;
+        public float[] values;
+        public const int dimension = 4;
     }
 }

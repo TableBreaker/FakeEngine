@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Numerics;
 
 namespace SharpRender.Mathematics
 {
@@ -33,5 +30,16 @@ namespace SharpRender.Mathematics
             var t2 = c - a;
             return t1.Cross(t2).normalized;
         }
+
+        public static Matrix4x4 Scale(Matrix4x4 mat, Vector3 scale)
+        {
+            var scaleMatrix = new Matrix4x4();
+            scaleMatrix.Set(0, 0, scale.x);
+            scaleMatrix.Set(1, 1, scale.y);
+            scaleMatrix.Set(2, 2, scale.z);
+            return scaleMatrix * mat;
+        }
+
+
     }
 }

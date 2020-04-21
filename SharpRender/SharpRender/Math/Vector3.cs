@@ -11,6 +11,16 @@ namespace SharpRender.Mathematics
             x = x_; y = y_; z = z_;
         }
 
+        public Vector3(float[] vec)
+        {
+            if (vec.Length != dimension)
+                throw new ArgumentException("Vector3 must have 3 elements");
+
+            x = vec[0];
+            y = vec[1];
+            z = vec[2];
+        }
+
         public float Dot(Vector3 v)
         {
             return Dot(this, v);
@@ -105,5 +115,6 @@ namespace SharpRender.Mathematics
         public static readonly Vector3 Zero = new Vector3(0f, 0f, 0f);
 
         public float x, y, z;
+        public const int dimension = 3;
     }
 }
