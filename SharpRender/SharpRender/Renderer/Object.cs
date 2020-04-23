@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using SharpRender.Mathematics;
 
 namespace SharpRender.Render
@@ -42,7 +41,21 @@ namespace SharpRender.Render
 
         public Matrix4x4 GetModelMatrix()
         {
-            var m = new Matrix4x4();
+            var model = new Matrix4x4();
+            model = MathUtility.Scale(model, scale);
+            model = MathUtility.RotateX(model, rotation.x);
+            model = MathUtility.RotateY(model, rotation.y);
+            model = MathUtility.RotateZ(model, rotation.z);
+            model = MathUtility.Translate(model, position);
+
+            return model;
+        }
+
+        public void Reset()
+        {
+            position = new Vector3();
+            scale = new Vector3(1f, 1f, 1f);
+            rotation = new Vector3();
         }
 
         private void AddTriangle(Triangle tri)
