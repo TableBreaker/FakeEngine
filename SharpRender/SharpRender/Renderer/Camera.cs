@@ -10,7 +10,23 @@ namespace SharpRender.Render
 
     class Camera
     {
-        public Matrix4x4 CalculateViewMatrix()
+        public Camera()
+        {
+            position = new Vector3(0f, 0f, 10f);
+            worldUp = new Vector3(0f, 1f, 0f);
+            rotation = new Vector3(0f, 180f, 0f);
+            UpdateVectors();
+        }
+
+        public Camera(Vector3 position_, Vector3 worldUp_, Vector3 rotation_)
+        {
+            position = position_;
+            worldUp = worldUp_;
+            rotation = rotation_;
+            UpdateVectors();
+        }
+
+        public Matrix4x4 GetViewMatrix()
         {
             return default;
         }
@@ -31,10 +47,5 @@ namespace SharpRender.Render
         public Vector3 up { get; set; }
         public Vector3 right { get; set; }
         public Vector3 worldUp { get; set; }
-
-        public float Near { get; private set; }
-        public float Far { get; private set; }
-        public float FieldOfView { get; private set; }
-        public ECameraProjection Mode { get; private set; }
     }
 }

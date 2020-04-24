@@ -92,5 +92,34 @@ namespace SharpRender.Mathematics
             scaleMatrix.Set(2, 2, scale.z);
             return scaleMatrix * mat;
         }
+
+        // Returns a LookAt matrix.
+        public static Matrix4x4 LookAt(Vector3 position, Vector3 target, Vector3 up)
+        {
+            // calculate the (reverse) direction vector
+            var direction = (position - target).normalized;
+            // calculate the basis vector that points to the right
+            var cameraRight = up.normalized.Cross(direction).normalized;
+            // calculate the up basis vector
+            var cameraUp = direction.normalized.Cross(cameraRight);
+            // calculate matrices
+            var rotational = new Matrix4x4(new float[]
+            {
+                cameraRight.x, cameraRight.y, cameraRight.z, 0f,
+                cameraUp.x, cameraUp.y, cameraUp.z, 0f,
+                direction.x, direction.y, direction.z, 0f,
+                0f, 0f, 0f, 0f,
+            });
+            // translate world coord to view coord
+            var positional = new Matrix4x4(new float[]
+            {
+                1f, 0f, 0f, -position.x,
+                0f, 1f, 0f, -position.y,
+                0f, 0f, 1f, -position.z,
+                0f, 0f, 0f, 1f,
+            });
+
+            return rotational * positional;
+        }
     }
 }
