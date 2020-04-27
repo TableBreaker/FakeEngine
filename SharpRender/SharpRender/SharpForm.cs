@@ -27,7 +27,7 @@ namespace SharpRender
 
         private void InitGraphic(int width, int height)
         {
-            _graphic = new Graphic(width, height);
+            _graphic = new Renderer(width, height);
         }
 
         private void Render(Graphics graphics)
@@ -42,7 +42,7 @@ namespace SharpRender
         }
 
         private SolidBrush _brush;
-        private Graphic _graphic;
+        private Renderer _graphic;
         private Bitmap _texture;
     }
 }

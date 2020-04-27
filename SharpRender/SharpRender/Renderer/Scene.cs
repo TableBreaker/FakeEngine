@@ -6,11 +6,13 @@ namespace SharpRender.Render
 {
     class Scene
     {
-        public bool RenderScene(Renderer renderer)
+        public void RenderScene(Renderer renderer)
         {
             
-            return true;
+            
         }
+
+        public void SetObjectPosition(int )
 
         public List<Object> _sceneObjects = new List<Object>();
     }
