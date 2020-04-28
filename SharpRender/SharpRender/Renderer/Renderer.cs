@@ -37,7 +37,7 @@ namespace SharpRender.Render
 			// swap the deltas if 2, 3, 6 or 7th octant
 			bool isSwap = dy > dx;
 			if (isSwap)
-				MathUtility.Swap(ref dx, ref dy);
+				Utils.Swap(ref dx, ref dy);
 
 			int e = 2 * dy - dx;
 

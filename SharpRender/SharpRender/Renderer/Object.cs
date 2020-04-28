@@ -39,14 +39,33 @@ namespace SharpRender.Render
             }
         }
 
+        public Object(Vector3[] vertices_, Vector4[] colors_, Vector3[] indices_)
+        {
+            if (colors_.Length != vertices_.Length)
+                throw new ArgumentException("Colors mus be specified for each vertex");
+
+            for (var i = 0; i < indices_.Length; i++)
+            {
+                AddTriangle(new Triangle(
+                    vertices_[(int)indices_[i].x],
+                    vertices_[(int)indices_[i].y],
+                    vertices_[(int)indices_[i].z]));
+
+                Triangles[^1].SetColors(
+                    colors_[(int)indices_[i].x],
+                    colors_[(int)indices_[i].y],
+                    colors_[(int)indices_[i].z]);
+            }
+        }
+
         public Matrix4x4 GetModelMatrix()
         {
             var model = new Matrix4x4();
-            model = MathUtility.Scale(model, scale);
-            model = MathUtility.RotateX(model, rotation.x);
-            model = MathUtility.RotateY(model, rotation.y);
-            model = MathUtility.RotateZ(model, rotation.z);
-            model = MathUtility.Translate(model, position);
+            model = Utils.Scale(model, scale);
+            model = Utils.RotateX(model, rotation.x);
+            model = Utils.RotateY(model, rotation.y);
+            model = Utils.RotateZ(model, rotation.z);
+            model = Utils.Translate(model, position);
 
             return model;
         }

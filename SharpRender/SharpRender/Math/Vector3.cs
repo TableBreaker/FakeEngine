@@ -98,7 +98,7 @@ namespace SharpRender.Mathematics
         {
             get
             {
-                return MathUtility.Magnitude(x, y, z);
+                return Utils.Magnitude(x, y, z);
             }
         }
 

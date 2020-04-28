@@ -6,13 +6,24 @@ namespace SharpRender.Render
 {
     class Scene
     {
+        public Scene()
+        {
+
+        }
+
         public void RenderScene(Renderer renderer)
         {
             
             
         }
 
-        public void SetObjectPosition(int )
+        // methods to manipulate objects;
+        public void SetObjectPosition(int x_coord, int y_coord, int z_coord)
+        {
+
+        }
+
+
 
         public List<Object> _sceneObjects = new List<Object>();
     }

@@ -36,7 +36,7 @@ namespace SharpRender.Render
 
         public void CalculateNormals()
         {
-            var normal = MathUtility.Normal(vertices[0].fromHomogeneous, vertices[1].fromHomogeneous, vertices[2].fromHomogeneous);
+            var normal = Utils.Normal(vertices[0].fromHomogeneous, vertices[1].fromHomogeneous, vertices[2].fromHomogeneous);
             normals = new Vector3[] { normal, normal, normal };
         }
 

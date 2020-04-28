@@ -29,7 +29,7 @@ namespace SharpRender.Render
 
         public Matrix4x4 GetViewMatrix()
         {
-            return MathUtility.LookAt(position, position + front, up);
+            return Utils.LookAt(position, position + front, up);
         }
 
         public void Reset()
@@ -44,8 +44,8 @@ namespace SharpRender.Render
         private void UpdateVectors()
         {
             var front_ = new Vector3();
-            var pitch = MathUtility.DegToRad(rotation.x);
-            var yaw = MathUtility.DegToRad(rotation.y);
+            var pitch = Utils.DegToRad(rotation.x);
+            var yaw = Utils.DegToRad(rotation.y);
             front_.x = MathF.Sin(yaw) * MathF.Cos(pitch);
             front_.y = MathF.Sin(pitch);
             front_.z = MathF.Cos(yaw) * MathF.Cos(pitch);
