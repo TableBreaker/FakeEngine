@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SharpRender.Renderer
+namespace SharpRender.Render
 {
     enum LightMode { FLAT, PHONG, GOURAUD };
 

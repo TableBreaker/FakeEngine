@@ -4,14 +4,14 @@ using SharpRender.Mathematics;
 
 namespace SharpRender.Render
 {
-    class Object
+    class RenderObject
     {
-        public Object(Triangle[] _triangles)
+        public RenderObject(Triangle[] _triangles)
         {
 
         }
 
-        public Object(Vector3[] vertices_, Vector4[] colors_, Vector3[] texCoords_, Vector3[] indices_)
+        public RenderObject(Vector3[] vertices_, Vector4[] colors_, Vector3[] texCoords_, Vector3[] indices_)
         {
             if (colors_.Length != vertices_.Length)
                 throw new ArgumentException("Colors mus be specified for each vertex");
@@ -39,7 +39,7 @@ namespace SharpRender.Render
             }
         }
 
-        public Object(Vector3[] vertices_, Vector4[] colors_, Vector3[] indices_)
+        public RenderObject(Vector3[] vertices_, Vector4[] colors_, Vector3[] indices_)
         {
             if (colors_.Length != vertices_.Length)
                 throw new ArgumentException("Colors mus be specified for each vertex");

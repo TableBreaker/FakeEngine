@@ -16,7 +16,6 @@ namespace SharpRender
         {
             InitializeComponent();
             InitGraphic(ClientSize.Width, ClientSize.Height);
-            _brush = new SolidBrush(Color.White);
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -27,22 +26,10 @@ namespace SharpRender
 
         private void InitGraphic(int width, int height)
         {
-            _graphic = new Renderer(width, height);
         }
 
         private void Render(Graphics graphics)
         {
-            if (_graphic == null)
-                return;
-
-            if (_graphic.Render())
-            {
-                
-            }
         }
-
-        private SolidBrush _brush;
-        private Renderer _graphic;
-        private Bitmap _texture;
     }
 }

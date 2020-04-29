@@ -11,7 +11,7 @@ namespace SharpRender.Render
 
         public enum Shape { CUBE, PYRAMID, SPHERE, OCTAHEDRON, TETRAHEDRON };
 
-        public Object GenerateObject(Shape objShape, int precision = DEFAULT_PRECISION_LEVEL)
+        public RenderObject GenerateObject(Shape objShape, int precision = DEFAULT_PRECISION_LEVEL)
         {
             switch(objShape)
             {
@@ -31,7 +31,7 @@ namespace SharpRender.Render
         }
 
         // returns a cube
-        private Object Cube()
+        private RenderObject Cube()
         {
             var vertices = new Vector3[]
             {
@@ -94,11 +94,11 @@ namespace SharpRender.Render
                 new Vector3(1, 1, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 0),
             };
 
-            return new Object(vertices, colors, texCoords, indices);
+            return new RenderObject(vertices, colors, texCoords, indices);
         }
 
         // return a pyramid.
-        private Object Pyramid()
+        private RenderObject Pyramid()
         {
             var vertices = new Vector3[]
             {
@@ -143,11 +143,11 @@ namespace SharpRender.Render
 
             };
 
-            return new Object(vertices, colors, texCoords, indices);
+            return new RenderObject(vertices, colors, texCoords, indices);
         }
 
         // return an octahedron.
-        private Object Octahedron()
+        private RenderObject Octahedron()
         {
             var vertices = new Vector3[]
             {
@@ -194,11 +194,11 @@ namespace SharpRender.Render
 
             };
 
-            return new Object(vertices, colors, texCoords, indices);
+            return new RenderObject(vertices, colors, texCoords, indices);
         }
 
         // return a tetrahedron
-        private Object Tetrahedron()
+        private RenderObject Tetrahedron()
         {
             var vertices = new Vector3[]
             {
@@ -233,7 +233,7 @@ namespace SharpRender.Render
 				new Vector3(1, 0, 0), new Vector3(0.5f, 1, 0), new Vector3(0, 0, 0),
             };
 
-            return new Object(vertices, colors, texCoords, indices);
+            return new RenderObject(vertices, colors, texCoords, indices);
         }
 
         private Vector4 Middle(Vector4 a, Vector4 b)
@@ -289,7 +289,7 @@ namespace SharpRender.Render
         }
 
         // generate a sphere
-        private Object Sphere(int precisionLevel, float radius)
+        private RenderObject Sphere(int precisionLevel, float radius)
         {
             // generate icosahedron first
             var t = (1f + MathF.Sqrt(5f)) / 2f;
@@ -353,7 +353,7 @@ namespace SharpRender.Render
                 new Vector4(1, 0, 1, 1),
             };
 
-            var iso = new Object(vertices, colors, indices);
+            var iso = new RenderObject(vertices, colors, indices);
 
             // refine each triangle N times
             for (var i = 0; i < precisionLevel; i++)
