@@ -1,6 +1,7 @@
 ﻿using SharpRender.Render;
 using SharpRender.Mathematics;
 using System.Drawing;
+using System.Collections.Generic;
 
 namespace SharpRender
 {
@@ -142,18 +143,101 @@ namespace SharpRender
 
 		}
 
-		// if true, the renderer uses the brush for selected object, otherwise the wireframe brush
-		public bool IsSelectedObject;
+		// returns a (x, y) pixel of the selected texture
+		private Vector4 SampleTexture(float x, float y)
+		{
+			return default;
+		}
 
+		// True, if a polygon is entirely off the screen.
+		private bool ToClip(Triangle tri)
+		{
+			return default;
+		}
+
+		// True, if a polygon is back-faced.
+		private bool IsVisible(Triangle tri)
+		{
+			return default;
+		}
+
+		// Calculates the colors in the vertices of a polygon using the Gouraud shading.  
+		// about Gouraud shading: https://en.wikipedia.org/wiki/Gouraud_shading
+		private Vector4[] GetGouraudColors(Triangle tri, Light lightSource, Material material)
+		{
+			return default;
+		}
+
+		#region Draw Functions
+
+		// Draws a line using the Bresenham's algorithm.
+		// about Bresenham's algorithm: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+		private void DrawLine(Vector3 from, Vector3 to)
+		{
+
+		}
+
+		// Draw a single pixel with a Z-test.
+		private void DrawPoint(int x, int y, float z, SolidBrush b)
+		{
+
+		}
+
+		// Draws a wireframe of a polygon(triangle).
+		private void DrawTriangle(Triangle tri)
+		{
+
+		}
+
+		// Fills and shades a polygon.
+		private void FillTriangle(Triangle tri, Triangle worldTri, Light lightSource, Material material, Vector4[] gouraudColors)
+		{
+
+		}
+
+		// Translate from homonegenous coordinates of the vector (w-division) and map to the viewport
+		private void ViewportTransform(Triangle tri)
+		{
+
+		}
+
+		// Remaps coordinates from [-1, 1] to the [0, viewportX(Y)] space.
+		private Vector4 NDCtoViewport(Vector4 vertex)
+		{
+			return default;
+		}
+
+        #endregion
+
+        // if true, the renderer uses the brush for selected object, otherwise the wireframe brush
+        public bool IsSelectedObject;
+
+		// The graphics objects to render on.
 		private Graphics _graphics;
+		// The background color.
 		private Color _bgColor;
+		// The brush for wireframe drawing.
 		private SolidBrush _wfBrush;
+		// The brush for wireframe drawing of the currently selected object.
 		private SolidBrush _selectedBrush;
+		// The brush for the surface drawing.
 		private SolidBrush _surfaceBrush;
+		// True, if a perspective projection is set, otherwise orthographics.
 		private bool _perspective;
+		// True, is back-face culling is set.
 		private bool _cullFace;
+		// The width of the viewport (screen).
 		private int _viewportX;
+		// The height of the viewport (screen).
 		private int _viewportY;
+		// Depth buffer (width X height).
 		private float[,] _zbuffer;
+		// Loaded textures.
+		private List<Bitmap> _textures;
+		// Selected texture.
+		private int _iTexture;
+		// Specifies the edge sampling behavior.
+		private TextureWrapMode _wrapMode;
+
     }
 }
