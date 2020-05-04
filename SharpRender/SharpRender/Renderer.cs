@@ -45,13 +45,17 @@ namespace SharpRender
 		// clears a screen with a current background color
 		public void ClearScreen()
 		{
-
+			_graphics.Clear(_bgColor);
 		}
 
 		// clears a depth buffer
 		public void ClearZBuffer()
 		{
-
+			for (var x = 0; x < _zbuffer.GetLength(0); x++)
+				for (var y = 0; y < _zbuffer.GetLength(1); y++)
+				{
+					_zbuffer[x, y] = float.PositiveInfinity;
+				}
 		}
 
 		// transforms renders and shades a object
