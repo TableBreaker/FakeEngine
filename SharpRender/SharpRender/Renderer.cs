@@ -3,6 +3,7 @@ using SharpRender.Mathematics;
 using System.Drawing;
 using System.Collections.Generic;
 using System;
+using System.Windows.Forms;
 
 namespace SharpRender
 {
@@ -59,10 +60,44 @@ namespace SharpRender
 				}
 		}
 
+		// *********************************************************************************************************
 		// transforms renders and shades a object
 		public void RenderObject(RenderObject obj, Matrix4x4 model, Matrix4x4 view, Matrix4x4 proj, Light light, bool wireframe, bool solid)
 		{
-			
+			var modelView = view * model;
+			Matrix3x3 normalTransform = modelView.Inverted().Transposed();
+			foreach (var tri in obj.Triangles)
+			{
+				// get the triangle transformed (world and camera coords)
+				var cameraTransformed = tri.GetTransformed(modelView, normalTransform);
+				// check visibility
+				if (_cullFace && !IsVisible(cameraTransformed))
+					continue;
+
+				// get the triangle transformed (clip space) if ortho, dont forget to apply the view matrix
+				var transformed = cameraTransformed.GetTransformed(_perspective ? proj : proj * view, new Matrix3x3());
+				ViewportTransform(transformed);
+				if (!ToClip(transformed))
+				{
+					if (wireframe)
+					{
+						DrawTriangle(transformed);
+					}
+					if (solid)
+					{
+						// another one for lighting calculations
+						var worldTransformed = tri.GetTransformed(model, normalTransform);
+						var gouraudColors = new List<Vector4> { Vector4.Zero, Vector4.Zero, Vector4.Zero, Vector4.Zero };
+						if (light.Mode == LightMode.GOURAUD)
+						{
+							// doing gouraud lighting calculation here in a 'vertex shader'
+							gouraudColors = GetGouraudColors(worldTransformed, light, obj.Material);
+						}
+						// essentially, entering fragment shader
+						FillTriangle(transformed, worldTransformed, light, obj.Material, gouraudColors);
+					}
+				}
+			}
 		}
 
 		public void SetGraphics(Graphics g)
@@ -235,7 +270,7 @@ namespace SharpRender
 		}
 
 		// Fills and shades a polygon.
-		private void FillTriangle(Triangle tri, Triangle worldTri, Light lightSource, Material material, Vector4[] gouraudColors)
+		private void FillTriangle(Triangle tri, Triangle worldTri, Light lightSource, Material material, List<Vector4> gouraudColors)
 		{
 
 		}
@@ -243,13 +278,15 @@ namespace SharpRender
 		// Translate from homonegenous coordinates of the vector (w-division) and map to the viewport
 		private void ViewportTransform(Triangle tri)
 		{
-
+			tri.vertices[0] = NDCtoViewport(tri.vertices[0].fromHomogeneous4);
+			tri.vertices[1] = NDCtoViewport(tri.vertices[1].fromHomogeneous4);
+			tri.vertices[2] = NDCtoViewport(tri.vertices[2].fromHomogeneous4);
 		}
 
 		// Remaps coordinates from [-1, 1] to the [0, viewportX(Y)] space.
 		private Vector4 NDCtoViewport(Vector4 vertex)
 		{
-			return default;
+			return new Vector4((int)((1f + vertex.x) * _viewportX / 2f), (int)((1f - vertex.y) * _viewportY / 2f), vertex.z, vertex.w);
 		}
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using SharpRender.Mathematics;
 
 namespace SharpRender.Render
@@ -24,7 +25,7 @@ namespace SharpRender.Render
             {
                 AddTriangle(new Triangle(
                     vertices_[(int)indices_[i].x],
-                    vertices_[(int)indices_[i].y], 
+                    vertices_[(int)indices_[i].y],
                     vertices_[(int)indices_[i].z]));
 
                 Triangles[^1].SetColors(
@@ -58,6 +59,60 @@ namespace SharpRender.Render
             }
         }
 
+        public void SetMaterialParameters(float ambience, float diffuse, float specular, int shininess)
+        {
+            Material.SetAmbient(ambience);
+            Material.SetDiffuse(diffuse);
+            Material.SetSpecular(specular);
+            Material.SetShininess(shininess);
+        }
+
+        public Vector4 GetMaterialParameters()
+        {
+            return new Vector4(Material.GetAmbient(), Material.GetDiffuse(), Material.GetSpecular(), Material.GetShininess());
+        }
+
+        public void SetMaterialColor(Vector4 col)
+        {
+            Material.SetColor(col);
+        }
+
+        public Vector4 GetMaterialColor()
+        {
+            return Material.GetColor();
+        }
+
+        public void ResetMaterial()
+        {
+            Material.Reset();
+        }
+
+        // set the colors of the object's triangles, if vertices = true then is assumes the vector defines the color in each vertex (3 per triangle)
+        public void SetTriangleColors(Vector4[] cols, bool vertices)
+        {
+            for (var i = 0; i < Triangles.Count; i++)
+            {
+                if (vertices)
+                {
+                    // color per vertex
+                    if (cols.Length != Triangles.Count * 3)
+                    {
+                        throw new ArgumentException("The color should be specified for each vertex.");
+                    }
+                    Triangles[i].SetColors(cols[3 * i], cols[3 * i + 1], cols[3 * i + 2]);
+                }
+                else
+                {
+                    // color per triangle
+                    if (cols.Length != Triangles.Count)
+                    {
+                        throw new ArgumentException("The color should be specified for each triangle");
+                    }
+                    Triangles[i].SetColor(cols[i]);
+                }
+            }
+        }
+
         public Matrix4x4 GetModelMatrix()
         {
             var model = new Matrix4x4();
@@ -85,6 +140,7 @@ namespace SharpRender.Render
         public Vector3 position { get; set; }
         public Vector3 rotation { get; set; }
         public Vector3 scale { get; set; }
+        public Material Material { get; set; }
 
         public List<Triangle> Triangles = new List<Triangle>();
     }

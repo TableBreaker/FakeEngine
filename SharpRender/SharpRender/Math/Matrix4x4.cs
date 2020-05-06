@@ -78,6 +78,16 @@ namespace SharpRender.Mathematics
             return Get(0, 0) * Minor(0, 0) - Get(0, 1) * Minor(0, 1) + Get(0, 2) * Minor(0, 2) - Get(0, 3) * Minor(0, 3);
         }
 
+        public Matrix4x4 Transposed()
+        {
+            var newValues = new float[dimension * dimension];
+            for (var i = 0; i < newValues.Length; i++)
+            {
+                newValues[i] = Get(i % dimension, i / dimension);
+            }
+            return new Matrix4x4(newValues);
+        }
+
         public Matrix4x4 Inverted()
         {
             var det = Determinant();
