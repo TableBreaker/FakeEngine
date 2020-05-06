@@ -51,6 +51,11 @@ namespace SharpRender.Mathematics
             return new Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
         }
 
+        public static Vector3 operator -(Vector3 v)
+        {
+            return new Vector3(-v.x, -v.y, -v.z);
+        }
+
         public static Vector3 operator *(Vector3 v, float c)
         {
             return new Vector3(v.x * c, v.y * c, v.z * c);
@@ -59,6 +64,11 @@ namespace SharpRender.Mathematics
         public static Vector3 operator *(float c, Vector3 v)
         {
             return v * c;
+        }
+
+        public static Vector3 operator *(Vector3 a, Vector3 b)
+        {
+            return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
         }
 
         public static Vector3 operator /(Vector3 v, float c)

@@ -2,6 +2,7 @@
 using SharpRender.Mathematics;
 using System.Drawing;
 using System.Collections.Generic;
+using System;
 
 namespace SharpRender
 {
@@ -156,20 +157,60 @@ namespace SharpRender
 		// True, if a polygon is entirely off the screen.
 		private bool ToClip(Triangle tri)
 		{
-			return default;
+			if (Utils.Area(tri) < .01)
+				return true;
+			
+			foreach (var vert in tri.vertices)
+			{
+				// draw a triangle if at least one vertex is inside ?
+				if (vert.x >= 0 && vert.x < _viewportX && vert.y >= 0 && vert.y < _viewportY)
+				{
+					return false;
+				}
+				if (vert.z < 1 && vert.z > 0)
+				{
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		// True, if a polygon is back-faced.
 		private bool IsVisible(Triangle tri)
 		{
-			return default;
+			// a face is visible is a dot-product of its normal vector
+			// and the first vertex of the triangle is less than zero 
+			var norm = Utils.Normal(tri.vertices[0], tri.vertices[1], tri.vertices[2]);
+			Vector3 v0 = tri.vertices[0];
+			var camPos = _perspective ? Vector3.Zero : new Vector3(v0.x, v0.y, 1f);
+			var visible = (camPos - v0).Dot(norm) > .5;
+			return visible;
 		}
 
 		// Calculates the colors in the vertices of a polygon using the Gouraud shading.  
-		// about Gouraud shading: https://en.wikipedia.org/wiki/Gouraud_shading
-		private Vector4[] GetGouraudColors(Triangle tri, Light lightSource, Material material)
+		// about Gouraud shading: https://en.wikipedia.org/wiki/Gouraud_shading  vertex light?
+		private List<Vector4> GetGouraudColors(Triangle tri, Light lightSource, Material material)
 		{
-			return default;
+			// gouraud model lighting calculations:
+			var colors = new List<Vector4>();
+			for (var i = 0; i < 3; i++)
+			{
+				// diffuse
+				var lightDir = (lightSource.Position - (Vector3)tri.vertices[i]).normalized;
+				var diff = MathF.Max(tri.normals[i].Dot(lightDir), 0f);
+				var diffuse = lightSource.GetDiffuseColor() * material.GetDiffuseColor() * diff;
+
+				// specular
+				var viewDir = (-(Vector3)tri.vertices[i]).normalized;
+				var reflectDir = Utils.Reflect(-lightDir, tri.normals[i]);
+				var spec = MathF.Pow(MathF.Max(viewDir.Dot(reflectDir), 0f), material.GetShininess());
+				var specular = lightSource.GetSpecularColor() * material.GetSpecularColor() * spec;
+
+				colors.Add(diffuse + specular);
+			}
+
+			return colors;
 		}
 
 		#region Draw Functions

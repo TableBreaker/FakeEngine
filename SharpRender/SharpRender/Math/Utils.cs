@@ -1,10 +1,33 @@
-﻿using System;
+﻿using SharpRender.Render;
+using System;
 
 namespace SharpRender.Mathematics
 {
     static class Utils
     {
         public const float PI = 3.141592653589793238462643383279502884f;
+
+        public static float Clamp(float value, float min, float max)
+        {
+            if (value > max) return max;
+            else if (value < min) return min;
+            else return value;
+        }
+
+        public static Vector4 Clamp(Vector4 value, float min, float max)
+        {
+            if (value.x < min) value.x = min;
+            if (value.y < min) value.y = min;
+            if (value.z < min) value.z = min;
+            if (value.w < min) value.w = min;
+
+            if (value.x > max) value.x = max;
+            if (value.y > max) value.y = max;
+            if (value.z > max) value.z = max;
+            if (value.w > max) value.w = max;
+
+            return value;
+        }
 
         public static float Magnitude(params float[] elements)
         {
@@ -31,6 +54,11 @@ namespace SharpRender.Mathematics
             var t1 = b - a;
             var t2 = c - a;
             return t1.Cross(t2).normalized;
+        }
+
+        public static Vector3 Reflect(Vector3 i, Vector3 normal)
+        {
+            return i - normal * (2f * normal.Dot(i));
         }
 
         public static float DegToRad(float degrees)
@@ -121,5 +149,14 @@ namespace SharpRender.Mathematics
 
             return rotational * positional;
         }
+
+        // returns an area of the given triangle
+        public static float Area(Triangle tri)
+        {
+            var left = (tri.vertices[1].x - tri.vertices[0].x) * (tri.vertices[2].y - tri.vertices[0].y);
+            var right = (tri.vertices[2].x - tri.vertices[0].x) * (tri.vertices[1].y - tri.vertices[0].y);
+            return MathF.Abs(.5f * (left - right));
+        }
+
     }
 }

@@ -42,6 +42,11 @@ namespace SharpRender.Mathematics
             return new Vector4(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
         }
 
+        public static Vector4 operator -(Vector4 v)
+        {
+            return new Vector4(-v.x, -v.y, -v.z, -v.w);
+        }
+
         public static Vector4 operator *(Vector4 v, float c)
         {
             return new Vector4(v.x * c, v.y * c, v.z * c, v.w * c);
@@ -50,6 +55,11 @@ namespace SharpRender.Mathematics
         public static Vector4 operator *(float c, Vector4 v)
         {
             return v * c;
+        }
+
+        public static Vector4 operator *(Vector4 a, Vector4 b)
+        {
+            return new Vector4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
         }
 
         public static Vector4 operator /(Vector4 v, float c)
