@@ -123,6 +123,9 @@ namespace SharpRender.Mathematics
 
         public static readonly Vector3 One = new Vector3(1f, 1f, 1f);
         public static readonly Vector3 Zero = new Vector3(0f, 0f, 0f);
+        public static readonly Vector3 Up = new Vector3(0f, 1f, 0f);
+        public static readonly Vector3 Right = new Vector3(1f, 0f, 0f);
+        public static readonly Vector3 Forward = new Vector3(0f, 0f, 1f);
 
         public float x, y, z;
         public const int dimension = 3;

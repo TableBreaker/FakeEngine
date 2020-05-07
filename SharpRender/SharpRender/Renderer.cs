@@ -112,7 +112,7 @@ namespace SharpRender
 		}
 
 		// returns the number of the currently loaded textures
-		public ulong GetTextureNumber()
+		public int GetTextureNumber()
 		{
 			return default;
 		}
@@ -186,7 +186,36 @@ namespace SharpRender
 		// returns a (x, y) pixel of the selected texture
 		private Vector4 SampleTexture(float x, float y)
 		{
-			return default;
+			if (_iTexture < 0 || _iTexture > GetTextureNumber())
+			{
+				// return white color if no texture
+				return Vector4.One;
+			}
+
+			var tex = _textures[_iTexture];
+
+			int ix = (int)(x * (tex.Width - 1));
+			int iy = (int)(y * (tex.Height - 1));
+			var mirrorX = MathF.Abs((int)x) % 2 != 0 ^ x <= 0;
+			var mirrorY = MathF.Abs((int)y) % 2 != 0 ^ y <= 0;
+
+			switch(_wrapMode)
+			{
+				case TextureWrapMode.CLAMP_TO_EDGE:
+					ix = (int)Utils.Clamp(x, 0f, 1f) * (tex.Width - 1);
+					iy = (int)Utils.Clamp(1 - y, 0f, 1f) * (tex.Height - 1);
+					break;
+				case TextureWrapMode.MIRRORED_REPEAT:
+					if (mirrorX) ix = tex.Width - ix;
+					if (mirrorY) iy = tex.Height - iy;
+					break;
+				case TextureWrapMode.REPEAT:
+					ix = (tex.Width + (ix % tex.Width)) % tex.Width;
+					iy = (tex.Height + (iy % tex.Height)) % tex.Height;
+					break;
+			}
+
+			return Utils.ColorToVec(tex.GetPixel(ix, iy));
 		}
 
 		// True, if a polygon is entirely off the screen.
@@ -254,25 +283,123 @@ namespace SharpRender
 		// about Bresenham's algorithm: https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
 		private void DrawLine(Vector3 from, Vector3 to)
 		{
+			var x = (int)from.x;
+			var y = (int)from.y;
 
+			var dx = (int)MathF.Abs(to.x - x);
+			var dy = (int)MathF.Abs(to.y - y);
+			var sx = Utils.Sign((int)(to.x - x));
+			var sy = Utils.Sign((int)(to.y - y));
+
+			// swap the deltas if 2, 3, 6, or 7th octant;
+			var isSwap = dy > dx;
+			if (isSwap) Utils.Swap(ref dx, ref dy);
+
+			var e = 2 * dy - dx;
+
+			// start drawing
+			for (var i = 1; i < dx; i++, e += 2 * dy)
+			{
+				// calculate z-value in pixel
+				var t = (new Vector3(x, y, 0f) - new Vector3(from.x, from.y, 0f)).Magnitude / (new Vector3(to.x, to.y, 0f) - new Vector3(from.x, from.y, 0f)).Magnitude;
+				var z = Utils.Lerp(from.z, to.z, t);
+				DrawPoint(x, y, z, IsSelectedObject ? _selectedBrush : _wfBrush);
+
+				// determine if need to change the direction
+				while (e >= 0)
+				{
+					if (isSwap)
+						x += sx;
+					else
+						y += sy;
+
+					e -= 2 * dy;
+				}
+
+				// increment y or x each step, depending on the octant
+				if (isSwap)
+					y += sy;
+				else
+					x += sx;
+			}
 		}
 
 		// Draw a single pixel with a Z-test.
 		private void DrawPoint(int x, int y, float z, SolidBrush b)
 		{
-
+			if (x >= 0 && x <_viewportX && y >= 0 && y < _viewportY && z > (_perspective ? 0 : -1f) && z < 1f)
+			{
+				// z test
+				if (z < _zbuffer[x, y])
+				{
+					_zbuffer[x, y] = z;
+					_graphics.FillRectangle(b, x, y, 1, 1);
+				}
+			}
 		}
 
 		// Draws a wireframe of a polygon(triangle).
 		private void DrawTriangle(Triangle tri)
 		{
-
+			var vert = 3;
+			for (var i = 0; i < vert; i++)
+			{
+				DrawLine(tri.vertices[i], tri.vertices[(i + 1) % vert]);
+			}
 		}
 
 		// Fills and shades a polygon.
 		private void FillTriangle(Triangle tri, Triangle worldTri, Light lightSource, Material material, List<Vector4> gouraudColors)
 		{
+			// memorize 1 / w (for perspective-correct mapping)
+			var ws = new Vector3(1f / tri.vertices[0].w, 1f / tri.vertices[1].w, 1f / tri.vertices[2].w);
+			// copy vectors first
+			Vector3 first = tri.vertices[0];
+			Vector3 second = tri.vertices[1];
+			Vector3 third = tri.vertices[2];
+			// in world coordinates ( for lighting calculations)
+			Vector3 firstW = worldTri.vertices[0];
+			Vector3 secondW = worldTri.vertices[1];
+			Vector3 thirdW = worldTri.vertices[2];
+			// normals (in world coordinates, for lighting calculations)
+			Vector3 firstNorm = worldTri.normals[0];
+			Vector3 secondNorm = worldTri.normals[1];
+			Vector3 thirdNorm = worldTri.normals[2];
+			// colors
+			var firstColor = tri.colors[0];
+			var secondColor = tri.colors[1];
+			var thirdColor = tri.colors[2];
+			// texture coordinates (set to zero if a texture isn't set)
+			Vector3 firstTex = Vector3.Zero, secondTex = Vector3.Zero, thirdTex = Vector3.Zero;
+			if (tri.texCoords.Length != 0)
+			{
+				firstTex = tri.texCoords[0] * ws.x;
+				secondTex = tri.texCoords[1] * ws.y;
+				thirdTex = tri.texCoords[2] * ws.z;
+			}
 
+			// deformed triangles not needed to be rendered
+			if ((first.y == second.y && first. y == third.y) || (first.x == second.x && first.x == third.x))
+			{
+				return;
+			}
+
+			// sort the vertices with all the data, third -> second -> first
+			if (first.y > second.y)
+			{
+				Utils.Swap(ref first, ref second);
+				Utils.Swap(ref firstW, ref secondW);
+				Utils.Swap(ref firstColor, ref secondColor);
+				Utils.Swap(ref firstNorm, ref secondNorm);
+				Utils.Swap(ref firstTex, ref thirdTex);
+				gouraudColors.Swap(0, 1);
+				Utils.Swap(ref ws.x, ref ws.y);
+			}
+
+			if (first.y > third.y)
+			{
+
+			}
 		}
 
 		// Translate from homonegenous coordinates of the vector (w-division) and map to the viewport

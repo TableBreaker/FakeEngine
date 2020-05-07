@@ -1,5 +1,7 @@
 ﻿using SharpRender.Render;
 using System;
+using System.Drawing;
+using System.Collections.Generic;
 
 namespace SharpRender.Mathematics
 {
@@ -29,6 +31,11 @@ namespace SharpRender.Mathematics
             return value;
         }
 
+        public static float Lerp(float a, float b, float t)
+        {
+            return (1 - t) * a + t * b;
+        }
+
         public static float Magnitude(params float[] elements)
         {
             if (elements == null)
@@ -47,6 +54,26 @@ namespace SharpRender.Mathematics
             var temp = left;
             left = right;
             right = temp;
+        }
+
+        public static void Swap<T>(this T[] array, int leftIdx, int rightIdx)
+        {
+            if (leftIdx < 0 || leftIdx >= array.Length || rightIdx < 0 || rightIdx >= array.Length)
+                return;
+
+            var temp = array[leftIdx];
+            array[leftIdx] = array[rightIdx];
+            array[rightIdx] = temp;
+        }
+
+        public static void Swap<T>(this List<T> list, int leftIdx, int rightIdx)
+        {
+            if (leftIdx < 0 || leftIdx >= list.Count || rightIdx < 0 || rightIdx >= list.Count)
+                return;
+
+            var temp = list[leftIdx];
+            list[leftIdx] = list[rightIdx];
+            list[rightIdx] = temp;
         }
 
         public static Vector3 Normal(Vector3 a, Vector3 b, Vector3 c)
@@ -158,5 +185,20 @@ namespace SharpRender.Mathematics
             return MathF.Abs(.5f * (left - right));
         }
 
+        public static Color VecToColor(Vector4 col)
+        {
+            return Color.FromArgb((int)(col.w * 255), (int)(col.x * 255), (int)(col.y * 255), (int)(col.z * 255));
+        }
+
+        public static Vector4 ColorToVec(Color col)
+        {
+            return new Vector4(col.R / 255f, col.G / 255f, col.B / 255f, col.A / 255f);
+        }
+
+        // return a signum of x
+        public static int Sign(int x)
+        {
+            return x == 0 ? 0 : (x > 0 ? 1 : -1);
+        }
     }
 }
