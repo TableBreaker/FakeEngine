@@ -398,7 +398,114 @@ namespace SharpRender
 
 			if (first.y > third.y)
 			{
+				Utils.Swap(ref first, ref third);
+				Utils.Swap(ref firstW, ref thirdW);
+				Utils.Swap(ref firstColor, ref thirdColor);
+				Utils.Swap(ref firstNorm, ref thirdNorm);
+				Utils.Swap(ref firstTex, ref thirdTex);
+				gouraudColors.Swap(0, 2);
+				Utils.Swap(ref ws.x, ref ws.z);
+			}
 
+			if (second.y > third.y)
+			{
+				Utils.Swap(ref second, ref third);
+				Utils.Swap(ref secondW, ref thirdW);
+				Utils.Swap(ref secondColor, ref thirdColor);
+				Utils.Swap(ref secondNorm, ref thirdNorm);
+				Utils.Swap(ref secondTex, ref thirdTex);
+				gouraudColors.Swap(1, 2);
+				Utils.Swap(ref ws.y, ref ws.z);
+			}
+
+			// memorize z-values
+			var zs = new Vector3(first.z, second.z, third.z);
+			// we're working in the 2d space, so we get rid of z
+			first.z = second.z = third.z = 0f;
+			// discard very narrow triangles
+			if (first.EqualEpsilon(second, .5f) || second.EqualEpsilon(third, .5f) || third.EqualEpsilon(first, .5f))
+			{
+				return;
+			}
+
+			// ambient lighting
+			var ambient = lightSource.GetAmbientColor() * material.GetAmbientColor();
+
+			var totalHeight = third.y - first.y;
+			// scan down to up
+			for (var i = 0; i < totalHeight; i++)
+			{
+				// lines is off the screen, don't draw
+				if (first.y + i >= _viewportY) return;
+				if (first.y + i < 0) continue;
+				var secondHalf = i > second.y - first.y || second.y == first.y;
+				var segmentHeight = secondHalf ? third.y - second.y : second.y - first.y;
+				// current height to overall height ratio
+				var alpha = (float)i / totalHeight;
+				// current segment height to overall segment height 
+				var beta = (float)(i - (secondHalf ? second.y - first.y : 0)) / segmentHeight;
+				// find current intersection point between scaline and first-to-third side
+				var A = first + (third - first) * alpha;
+				// find current intersection point between scanline and first-tosecond (or second-to-third) side
+				var B = secondHalf ? second + (third - second) * beta : first + (second - first) * beta;
+				// A should be on the left
+				if (A.x > B.x) Utils.Swap(ref A, ref B);
+				// the line is off the screen, don't draw
+				if (A.x > _viewportX || B.x <= 0) continue;
+				if (A.x < 0) A.x = 0;
+				if (B.x > _viewportX) B.x = _viewportX - 1;
+				// fill the line between A and B
+				for (var j = A.x; j <= B.x; j++)
+				{
+					// find barycentric coordinates for interpolation
+					try
+					{
+						var coordinates = Utils.Barycentric2D(new Vector3(j, first.y + i, 0f), first, second, third);
+						// find interpolated z-value
+						var z = coordinates.Dot(zs);
+						var oneToW = coordinates.Dot(ws);
+
+						// determine a color
+						var col = firstColor * coordinates.x + secondColor * coordinates.y + thirdColor * coordinates.z;
+						if (_iTexture >= 0 && _iTexture < GetTextureNumber())
+						{
+							// find a texture pixel
+							var texel = (firstTex * coordinates.x / oneToW + secondTex * coordinates.y / oneToW + thirdTex * coordinates.z / oneToW);
+							// resulting color = color from vertices * texel
+							col = SampleTexture(texel.x, texel.y);
+						}
+						else
+						{
+							col = firstColor * coordinates.x + secondColor * coordinates.y + thirdColor * coordinates.z;
+						}
+
+						// determine a fragment position (in world space)
+						var fragPos = (firstW * coordinates.x + secondW * coordinates.y + thirdW * coordinates.z);
+						// determine an interpolated normal
+						var fragNormal = new Vector3();
+						switch(lightSource.Mode)
+						{
+							case LightMode.FLAT:
+								fragNormal = ((firstNorm + secondNorm + thirdNorm) / 3f).normalized;
+								break;
+							case LightMode.PHONG:
+								// Phong model shading normal interpolation
+								fragNormal = (firstNorm * coordinates.x + secondNorm * coordinates.y * thirdNorm * coordinates.z).normalized;
+								break;
+						}
+
+						if (lightSource.Mode != LightMode.GOURAUD)
+						{
+							// diffuse lighting
+
+						}
+						else
+						{
+
+						}
+					}
+					catch { }
+				}
 			}
 		}
 

@@ -49,6 +49,11 @@ namespace SharpRender.Mathematics
             return MathF.Sqrt(sqrm);
         }
 
+        public static bool CompareFloat(float a, float b, float eps)
+        {
+            return MathF.Abs(a - b) < eps;
+        }
+
         public static void Swap<T>(ref T left, ref T right)
         {
             var temp = left;
@@ -175,6 +180,34 @@ namespace SharpRender.Mathematics
             });
 
             return rotational * positional;
+        }
+
+        // calculate barycentric coordinates (u, v, w) for point p with respect to triangle (a, b, c).
+        public static Vector3 Barycentric2D(Vector3 p, Vector3 a, Vector3 b, Vector3 c)
+        {
+            var v0 = b - a;
+            var v1 = c - a;
+            var v2 = p - a;
+            // disregard z-coordinates
+            v0.z = 0f;
+            v1.z = 0f;
+            v2.z = 0f;
+            // Cramer's method
+            var d00 = v0.Dot(v0);
+            var d01 = v0.Dot(v1);
+            var d11 = v1.Dot(v1);
+            var d20 = v2.Dot(v0);
+            var d21 = v2.Dot(v1);
+            var denom = d00 * d11 - d01 * d01;
+            var v = (d11 * d20 - d01 * d21) / denom;
+            var w = (d00 * d21 - d01 * d20) / denom;
+            var u = 1f - v - w;
+            if (float.IsNaN(v) || float.IsNaN(u) || float.IsNaN(w))
+            {
+                // deformed triangle
+                throw new ArgumentException("Triangle is deformed: cannot compute barycentric coordinateds");
+            }
+            return new Vector3(u, v, w);
         }
 
         // returns an area of the given triangle

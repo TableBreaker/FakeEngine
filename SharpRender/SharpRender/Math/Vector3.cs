@@ -91,6 +91,11 @@ namespace SharpRender.Mathematics
             return !(a == b);
         }
 
+        public bool EqualEpsilon(Vector3 vec, float eps)
+        {
+            return Utils.CompareFloat(x, vec.x, eps) && Utils.CompareFloat(y, vec.y, eps) && Utils.CompareFloat(z, vec.z, eps);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj == null || !(obj is Vector3))
