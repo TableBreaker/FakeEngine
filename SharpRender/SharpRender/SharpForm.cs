@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpRender.Render;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,21 +16,28 @@ namespace SharpRender
         public SharpForm()
         {
             InitializeComponent();
-            InitGraphic(ClientSize.Width, ClientSize.Height);
+            _mainScene = new Scene();
+            _renderer = new Renderer(Graphics.FromImage(null), 800, 450);
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        private void SetScene()
         {
-            base.OnPaint(e);
-            Render(e.Graphics);
+
         }
 
-        private void InitGraphic(int width, int height)
+        private void UpdateObjectsParams()
         {
+            if (!_mainScene.IsEmpty())
+            {
+                var pos = _mainScene.GetObjectPosition(false);
+            }
         }
 
-        private void Render(Graphics graphics)
-        {
-        }
+        private Scene _mainScene;
+        private Renderer _renderer;
+        private Bitmap _bm;
+        private Bitmap _noTexture;
+
+        private PictureBox _pictureBox;
     }
 }

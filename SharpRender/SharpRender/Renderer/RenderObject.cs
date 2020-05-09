@@ -59,6 +59,18 @@ namespace SharpRender.Render
             }
         }
 
+        public void SetReflection(bool xy, bool xz, bool yz)
+        {
+            _reflectionXY = xy;
+            _reflectionXZ = xz;
+            _reflectionYZ = yz;
+        }
+
+        public Vector3 GetReflection()
+        {
+            return new Vector3(_reflectionXY ? 1f : 0f, _reflectionYZ ? 1f : 0f, _reflectionXZ ? 1f : 0f);
+        }
+
         public void SetMaterialParameters(float ambience, float diffuse, float specular, int shininess)
         {
             Material.SetAmbient(ambience);
@@ -85,6 +97,21 @@ namespace SharpRender.Render
         public void ResetMaterial()
         {
             Material.Reset();
+        }
+
+        public void SetTextureIndex(int iTex)
+        {
+            _textureIndex = iTex;
+        }
+
+        public void RemoveTexture()
+        {
+            _textureIndex = -1;
+        }
+
+        public int GetTextureIndex()
+        {
+            return _textureIndex;
         }
 
         // set the colors of the object's triangles, if vertices = true then is assumes the vector defines the color in each vertex (3 per triangle)
@@ -116,20 +143,20 @@ namespace SharpRender.Render
         public Matrix4x4 GetModelMatrix()
         {
             var model = new Matrix4x4();
-            model = Utils.Scale(model, scale);
-            model = Utils.RotateX(model, rotation.x);
-            model = Utils.RotateY(model, rotation.y);
-            model = Utils.RotateZ(model, rotation.z);
-            model = Utils.Translate(model, position);
+            model = Utils.Scale(model, Scale);
+            model = Utils.RotateX(model, Rotation.x);
+            model = Utils.RotateY(model, Rotation.y);
+            model = Utils.RotateZ(model, Rotation.z);
+            model = Utils.Translate(model, Position);
 
             return model;
         }
 
         public void Reset()
         {
-            position = new Vector3();
-            scale = new Vector3(1f, 1f, 1f);
-            rotation = new Vector3();
+            Position = new Vector3();
+            Scale = new Vector3(1f, 1f, 1f);
+            Rotation = new Vector3();
         }
 
         private void AddTriangle(Triangle tri)
@@ -137,11 +164,19 @@ namespace SharpRender.Render
             Triangles.Add(tri);
         }
 
-        public Vector3 position { get; set; }
-        public Vector3 rotation { get; set; }
-        public Vector3 scale { get; set; }
+        public Vector3 Position { get; set; }
+        public Vector3 Rotation { get; set; }
+        public Vector3 Scale { get; set; }
         public Material Material { get; set; }
 
         public List<Triangle> Triangles = new List<Triangle>();
+
+        private bool _reflectionXY;
+        private bool _reflectionXZ;
+        private bool _reflectionYZ;
+
+
+        // the number of the currently used texture (-1 if no texture)
+        private int _textureIndex;
     }
 }

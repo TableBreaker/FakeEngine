@@ -102,85 +102,93 @@ namespace SharpRender
 
 		public void SetGraphics(Graphics g)
 		{
-
+			_graphics = g;
 		}
 		
 		// loads a texture to the renderer
 		public void AddTexture(Bitmap tex)
 		{
-
+			_textures.Add(tex);
 		}
 
 		// returns the number of the currently loaded textures
 		public int GetTextureNumber()
 		{
-			return default;
+			return _textures.Count;
 		}
 
 		// returns a selected texture
 		public Bitmap GetTexture(int iTex)
 		{
-			return default;
+			if (iTex < 0 || iTex >= _textures.Count)
+			{
+				throw new ArgumentException("Texture index is out of bounds");
+			}
+			return _textures[iTex];
 		}
 
 		// sets a current texture
 		public void SetTextureIndex(int iTex)
 		{
-
+			if (iTex < 0 || iTex >= _textures.Count)
+			{
+				iTex = -1;
+			}
+			_iTexture = iTex;
 		}
 
 		// sets a texture edge sampling mode
 		public void SetWrapMode(TextureWrapMode mode)
 		{
-
+			_wrapMode = mode;
 		}
 
 		// returns the background color
 		public Color GetBGColor()
 		{
-			return default;
+			return _bgColor;
 		}
 
 		// returns the wireframe color
 		public Color GetWFColor()
 		{
-			return default;
+			return _wfBrush.Color;
 		}
 
 		// returns the wireframe color of the selected object
 		public Color GetSelectedColor()
 		{
-			return default;
+			return _selectedBrush.Color;
 		}
 
 		// sets the background color
 		public void SetBGColor(Color col)
 		{
-
+			_bgColor = col;
 		}
 
 		// sets the wireframe color
 		public void SetWFColor(Color col)
 		{
-
+			_wfBrush.Color = col;
 		}
 
 		// sets the wireframe color of the selected object
 		public void SetSelectedColor(Color col)
 		{
-
+			_selectedBrush.Color = col;
 		}
 
 		// switches a current projection mode
 		public void SetProjection(bool perspective)
 		{
-
+			_perspective = perspective;
 		}
 
 		// switches back-face culling
 		public void SetFaceCulling(bool cullFace)
 		{
-
+			_cullFace = cullFace;
 		}
 
 		// returns a (x, y) pixel of the selected texture
@@ -455,7 +463,7 @@ namespace SharpRender
 				if (A.x < 0) A.x = 0;
 				if (B.x > _viewportX) B.x = _viewportX - 1;
 				// fill the line between A and B
-				for (var j = A.x; j <= B.x; j++)
+				for (var j = (int)A.x; j <= B.x; j++)
 				{
 					// find barycentric coordinates for interpolation
 					try
@@ -497,14 +505,33 @@ namespace SharpRender
 						if (lightSource.Mode != LightMode.GOURAUD)
 						{
 							// diffuse lighting
+							var lightDir = (lightSource.Position - fragPos).normalized;
+							var diff = MathF.Max(fragNormal.Dot(lightDir), 0f);
+							var diffuse = lightSource.GetDiffuseColor() * material.GetDiffuseColor() * diff;
 
+							// specular lighting
+							var viewDir = (-fragPos).normalized;
+							var reflectDir = Utils.Reflect(-lightDir, fragNormal);
+							var spec = MathF.Pow(MathF.Max(viewDir.Dot(reflectDir), 0f), material.GetShininess());
+							var specular = lightSource.GetSpecularColor() * material.GetSpecularColor() * spec;
+
+							// resulting
+							col = Utils.Clamp((ambient + (lightSource.On ? diffuse + specular : Vector4.Zero)) * col, 0f, 1f);
 						}
 						else
 						{
-
+							// using pre-computed vertex color values
+							var sumLight = gouraudColors[0] * coordinates.x + gouraudColors[1] * coordinates.y + gouraudColors[2] * coordinates.z;
+							col = Utils.Clamp(ambient + (lightSource.On ? sumLight : Vector4.Zero) * col, 0f, 1f);
 						}
+
+						_surfaceBrush.Color = Color.FromArgb(255, (int)(col.x * 255), (int)(col.y * 255), (int)(col.z * 255));
+						DrawPoint(j, (int)first.y + i, z, _surfaceBrush);
 					}
-					catch { }
+					catch
+					{
+						// deformed triangle or something else, don't draw
+					}
 				}
 			}
 		}

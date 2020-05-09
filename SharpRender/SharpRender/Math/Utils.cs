@@ -182,6 +182,41 @@ namespace SharpRender.Mathematics
             return rotational * positional;
         }
 
+        // returns a perspective projection matrix with the specified parameters
+        public static Matrix4x4 Perspective(float fov, float aspect, float near, float far)
+        {
+            // OpenGL peojection matrix:
+            var top = near * MathF.Tan(DegToRad(fov) / 2f);
+            var bottom = -top;
+            var right = top * aspect;
+            var left = -right;
+            var proj = new Matrix4x4();
+            proj.Set(0, 0, 2 * near / (right - left)); // scale the x coordinates
+            proj.Set(0, 2, (right + left) / (right - left));
+            proj.Set(1, 1, 2 * near / (top - bottom)); // scale the y coordinates
+            proj.Set(2, 2, -(far + near) / (far - near)); // used to remap z to [0, 1]
+            proj.Set(3, 3, 0f);
+            proj.Set(2, 3, -2 * far * near / (far - near)); // used to remap z to [0, 1]
+            proj.Set(3, 2, -1f); // used to remap z tp [0, 1]
+            return proj;
+        }
+
+        // returns an orthographic peojecion matrix with the specified parameters
+        public static Matrix4x4 Orthographic(float top, float right, float near, float far)
+        {
+            // OpenGL projection matrix
+            var left = -right;
+            var bottom = -top;
+            var ortho = new Matrix4x4();
+            ortho.Set(0, 0, 2f / (right - left));
+            ortho.Set(1, 1, 2f / (top - bottom));
+            ortho.Set(2, 2, -2f / (far - near));
+            ortho.Set(0, 3, -(right + left) / (right - left));
+            ortho.Set(1, 3, -(top + bottom) / (top - bottom));
+            ortho.Set(2, 3, -(far + near) / (far - near));
+            return ortho;
+        }
+
         // calculate barycentric coordinates (u, v, w) for point p with respect to triangle (a, b, c).
         public static Vector3 Barycentric2D(Vector3 p, Vector3 a, Vector3 b, Vector3 c)
         {
