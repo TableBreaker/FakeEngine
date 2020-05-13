@@ -168,7 +168,7 @@ namespace SharpRender.Mathematics
                 cameraRight.x, cameraRight.y, cameraRight.z, 0f,
                 cameraUp.x, cameraUp.y, cameraUp.z, 0f,
                 direction.x, direction.y, direction.z, 0f,
-                0f, 0f, 0f, 0f,
+                0f, 0f, 0f, 1f,
             });
             // translate world coord to view coord
             var positional = new Matrix4x4(new float[]

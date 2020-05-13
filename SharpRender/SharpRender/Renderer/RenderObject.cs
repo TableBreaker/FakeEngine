@@ -7,12 +7,20 @@ namespace SharpRender.Render
 {
     class RenderObject
     {
-        public RenderObject(Triangle[] _triangles)
+        public RenderObject(List<Triangle> triangles)
         {
-
+            Triangles = triangles;
+            Position = Vector3.Zero;
+            Scale = new Vector3(1f, 1f, 1f);
+            Rotation = Vector3.Zero;
+            _reflectionXY = false;
+            _reflectionXZ = false;
+            _reflectionYZ = false;
+            Material = new Material();
+            _textureIndex = -1;
         }
 
-        public RenderObject(Vector3[] vertices_, Vector4[] colors_, Vector3[] texCoords_, Vector3[] indices_)
+        public RenderObject(Vector3[] vertices_, Vector4[] colors_, Vector3[] texCoords_, Vector3[] indices_) : this(new List<Triangle>())
         {
             if (colors_.Length != vertices_.Length)
                 throw new ArgumentException("Colors mus be specified for each vertex");
@@ -35,12 +43,12 @@ namespace SharpRender.Render
 
                 Triangles[^1].SetTexCoords(
                     texCoords_[3 * i],
-                    colors_[3 * i + 1],
-                    colors_[3 * i + 2]);
+                    texCoords_[3 * i + 1],
+                    texCoords_[3 * i + 2]);
             }
         }
 
-        public RenderObject(Vector3[] vertices_, Vector4[] colors_, Vector3[] indices_)
+        public RenderObject(Vector3[] vertices_, Vector4[] colors_, Vector3[] indices_) : this(new List<Triangle>())
         {
             if (colors_.Length != vertices_.Length)
                 throw new ArgumentException("Colors mus be specified for each vertex");

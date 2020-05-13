@@ -11,6 +11,7 @@ namespace SharpRender.Render
         {
             vertices = new Vector4[] { first, second, third };
             colors = new Vector4[] { Vector4.One, Vector4.One, Vector4.One };
+            texCoords = new Vector4[] { Vector3.Zero, Vector3.Zero, Vector3.Zero };
             CalculateNormals();
         }
 

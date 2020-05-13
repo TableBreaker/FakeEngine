@@ -406,19 +406,6 @@ namespace SharpRender.Render
             return _selectedObject;
         }
 
-        public bool FromFile(string file)
-        {
-            var delimStr = "\r\n";
-            var delimiter = delimStr.ToCharArray();
-            var lines = file.Split(delimiter);
-
-            // parse each line
-            var colors = new List<Vector4>();
-
-
-        }
-
-
         private Light _lightSource;
         private Camera _camera;
         private List<RenderObject> _sceneObjects = new List<RenderObject>();

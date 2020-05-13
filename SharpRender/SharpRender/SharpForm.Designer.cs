@@ -32,6 +32,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this._pictureBox = new System.Windows.Forms.PictureBox();
             this.Text = "SharpRender";
         }
 
