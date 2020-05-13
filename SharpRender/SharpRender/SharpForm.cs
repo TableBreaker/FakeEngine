@@ -73,6 +73,26 @@ namespace SharpRender
                 rotate.z += 10f;
             }
 
+            if (e.KeyChar == 'r')
+            {
+                ResetObject();
+            }
+
+            if (e.KeyChar == 'n')
+            {
+                _mainScene.SetDrawingMode(true, false);
+            }
+
+            if (e.KeyChar == 'm')
+            {
+                _mainScene.SetDrawingMode(false, true);
+            }
+
+            if (e.KeyChar == 'b')
+            {
+                _mainScene.SetDrawingMode(true, true);
+            }
+
             MoveObject(translate);
             RotateObject(rotate);
         }
@@ -90,6 +110,12 @@ namespace SharpRender
             var rot = _mainScene.GetObjectRotation(false);
             rot += rotate;
             _mainScene.SetObjectRotation((int)rot.x, (int)rot.y, (int)rot.z);
+        }
+
+        private void ResetObject()
+        {
+            _mainScene.SetObjectPosition(0, 0, 0);
+            _mainScene.SetObjectRotation(0, 0, 0);
         }
 
         private void InitScene()
