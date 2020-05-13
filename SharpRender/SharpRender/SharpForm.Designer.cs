@@ -1,4 +1,6 @@
-﻿namespace SharpRender
+﻿using System.ComponentModel;
+
+namespace SharpRender
 {
     partial class SharpForm
     {
@@ -32,8 +34,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this._pictureBox = new System.Windows.Forms.PictureBox();
             this.Text = "SharpRender";
+            _pictureBox = new System.Windows.Forms.PictureBox();
+            _pictureBox.Size = this.ClientSize;
+            Controls.Add(_pictureBox);
         }
 
         #endregion
