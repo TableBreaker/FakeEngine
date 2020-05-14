@@ -30,71 +30,74 @@ namespace SharpRender
             base.OnMouseMove(e);
         }
 
-        protected override void OnKeyPress(KeyPressEventArgs e)
+        protected override void OnKeyDown(KeyEventArgs e)
         {
-            base.OnKeyPress(e);
+            base.OnKeyDown(e);
+
             Vector3 translate = Vector3.Zero;
             Vector3 rotate = Vector3.Zero;
-            if (e.KeyChar == 'w')
+
+            if (e.KeyCode == Keys.W)
             {
                 translate.z -= 10f;
             }
-            if (e.KeyChar == 's')
+            if (e.KeyCode == Keys.S)
             {
                 translate.z += 10f;
             }
-            if (e.KeyChar == 'a')
+            if (e.KeyCode == Keys.A)
             {
                 translate.x -= 10f;
             }
-            if (e.KeyChar == 'd')
+            if (e.KeyCode == Keys.D)
             {
                 translate.x += 10f;
             }
-            if (e.KeyChar == 'q')
+            if (e.KeyCode == Keys.Q)
             {
                 translate.y -= 10f;
             }
-            if (e.KeyChar == 'e')
+            if (e.KeyCode == Keys.E)
             {
                 translate.y += 10f;
             }
 
-            if (e.KeyChar == 'u')
+            if (e.KeyCode == Keys.U)
             {
                 rotate.x += 10f;
             }
-            if (e.KeyChar == 'i')
+            if (e.KeyCode == Keys.I)
             {
                 rotate.y += 10f;
             }
-            if (e.KeyChar == 'o')
+            if (e.KeyCode == Keys.O)
             {
                 rotate.z += 10f;
             }
 
-            if (e.KeyChar == 'r')
+            if (e.KeyCode == Keys.R)
             {
                 ResetObject();
             }
 
-            if (e.KeyChar == 'n')
+            if (e.KeyCode == Keys.N)
             {
                 _mainScene.SetDrawingMode(true, false);
             }
 
-            if (e.KeyChar == 'm')
+            if (e.KeyCode == Keys.M)
             {
                 _mainScene.SetDrawingMode(false, true);
             }
 
-            if (e.KeyChar == 'b')
+            if (e.KeyCode == Keys.B)
             {
                 _mainScene.SetDrawingMode(true, true);
             }
 
             MoveObject(translate);
             RotateObject(rotate);
+
         }
 
         private void MoveObject(Vector3 translate)
