@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using SharpRender.Mathematics;
+using FakeEngine.Mathematics;
 
-namespace SharpRender.Render
+namespace FakeEngine.Render
 {
     class Triangle
     {

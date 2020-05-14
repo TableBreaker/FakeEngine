@@ -1,11 +1,11 @@
-﻿using SharpRender.Render;
-using SharpRender.Mathematics;
+﻿using FakeEngine.Render;
+using FakeEngine.Mathematics;
 using System.Drawing;
 using System.Collections.Generic;
 using System;
 using System.Windows.Forms;
 
-namespace SharpRender
+namespace FakeEngine
 {
 	enum TextureWrapMode { REPEAT, MIRRORED_REPEAT, CLAMP_TO_EDGE };
 

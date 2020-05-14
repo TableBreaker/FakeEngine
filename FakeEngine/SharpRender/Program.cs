@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SharpRender
+namespace FakeEngine
 {
     static class Program
     {
@@ -17,7 +17,7 @@ namespace SharpRender
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new SharpForm());
+            Application.Run(new FakeForm());
         }
     }
 }

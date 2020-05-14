@@ -1,7 +1,7 @@
-﻿using SharpRender.Mathematics;
+﻿using FakeEngine.Mathematics;
 using System;
 
-namespace SharpRender.Render
+namespace FakeEngine.Render
 {
     enum ECameraProjection
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SharpRender.Render
+namespace FakeEngine.Render
 {
     class Shader
     {

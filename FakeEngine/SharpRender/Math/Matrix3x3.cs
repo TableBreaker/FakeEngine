@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.WebSockets;
 
-namespace SharpRender.Mathematics
+namespace FakeEngine.Mathematics
 {
     sealed class Matrix3x3
     {

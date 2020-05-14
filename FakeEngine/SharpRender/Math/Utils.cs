@@ -1,9 +1,9 @@
-﻿using SharpRender.Render;
+﻿using FakeEngine.Render;
 using System;
 using System.Drawing;
 using System.Collections.Generic;
 
-namespace SharpRender.Mathematics
+namespace FakeEngine.Mathematics
 {
     static class Utils
     {

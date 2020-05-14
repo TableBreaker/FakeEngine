@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using SharpRender.Mathematics;
+using FakeEngine.Mathematics;
 
-namespace SharpRender.Render
+namespace FakeEngine.Render
 {
     class Shapes
     {

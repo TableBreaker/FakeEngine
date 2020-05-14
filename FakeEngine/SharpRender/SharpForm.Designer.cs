@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace SharpRender
+namespace FakeEngine
 {
-    partial class SharpForm
+    partial class FakeForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -34,7 +34,7 @@ namespace SharpRender
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Text = "SharpRender";
+            this.Text = "FakeEngine";
             _pictureBox = new System.Windows.Forms.PictureBox();
             _pictureBox.Size = this.ClientSize;
             Controls.Add(_pictureBox);

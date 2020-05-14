@@ -1,9 +1,9 @@
-﻿using SharpRender.Mathematics;
+﻿using FakeEngine.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SharpRender.Render
+namespace FakeEngine.Render
 {
     enum LightMode { FLAT, PHONG, GOURAUD };
 

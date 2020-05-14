@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace SharpRender.Mathematics
+namespace FakeEngine.Mathematics
 {
     sealed class Matrix4x4
     {

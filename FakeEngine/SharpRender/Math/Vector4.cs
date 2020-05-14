@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharpRender.Mathematics
+namespace FakeEngine.Mathematics
 {
     struct Vector4
     {

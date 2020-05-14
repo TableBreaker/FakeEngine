@@ -1,14 +1,14 @@
-﻿using SharpRender.Mathematics;
-using SharpRender.Render;
+﻿using FakeEngine.Mathematics;
+using FakeEngine.Render;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace SharpRender
+namespace FakeEngine
 {
-    public partial class SharpForm : Form
+    public partial class FakeForm : Form
     {
-        public SharpForm()
+        public FakeForm()
         {
             InitializeComponent();
             _mainScene = new Scene();
