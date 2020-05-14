@@ -25,6 +25,7 @@ namespace FakeEngine
 			_wfBrush = new SolidBrush(DEFAULT_WF_COLOR);
 			_selectedBrush = new SolidBrush(DEFAULT_SELECTED_COLOR);
 			_surfaceBrush = new SolidBrush(Color.Black);
+			_AABrush = new SolidBrush(Color.FromArgb(128, _selectedBrush.Color));
 
 			// initialize z-buffer
 			SetViewPort(viewportWidth, viewportHeight);
@@ -321,7 +322,7 @@ namespace FakeEngine
 					else
 						y += sy;
 
-					e -= 2 * dy;
+					e -= 2 * dx;
 				}
 
 				// increment y or x each step, depending on the octant
@@ -563,6 +564,8 @@ namespace FakeEngine
 		private SolidBrush _wfBrush;
 		// The brush for wireframe drawing of the currently selected object.
 		private SolidBrush _selectedBrush;
+		// The brush for AA
+		private SolidBrush _AABrush;
 		// The brush for the surface drawing.
 		private SolidBrush _surfaceBrush;
 		// True, if a perspective projection is set, otherwise orthographics.
