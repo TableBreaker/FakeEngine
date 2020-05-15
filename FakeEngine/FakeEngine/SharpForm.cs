@@ -19,17 +19,6 @@ namespace FakeEngine
             SetScene();
         }
 
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            base.OnMouseDown(e);
-        }
-
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            Console.WriteLine("move");
-            base.OnMouseMove(e);
-        }
-
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
@@ -126,7 +115,6 @@ namespace FakeEngine
             var shape = new Shapes();
             var obj = shape.GenerateObject(Shapes.Shape.CUBE);
             _mainScene.AddObject(obj);
-            _mainScene.SetLightPosition(50, 100, -50);
             _mainScene.SetLightColor(Color.White);
             obj.SetMaterialColor(Vector4.One);
             obj.SetMaterialParameters(1f, 1f, 1f, 10);

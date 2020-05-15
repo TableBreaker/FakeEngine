@@ -87,7 +87,7 @@ namespace FakeEngine
 					if (solid)
 					{
 						// another one for lighting calculations
-						var worldTransformed = tri.GetTransformed(model, normalTransform);
+						var worldTransformed = tri.GetTransformed(modelView, normalTransform);
 						var gouraudColors = new List<Vector4> { Vector4.Zero, Vector4.Zero, Vector4.Zero, Vector4.Zero };
 						if (light.Mode == LightMode.GOURAUD)
 						{
@@ -450,9 +450,9 @@ namespace FakeEngine
 				var secondHalf = i > second.y - first.y || second.y == first.y;
 				var segmentHeight = secondHalf ? third.y - second.y : second.y - first.y;
 				// current height to overall height ratio
-				var alpha = (float)i / totalHeight;
+				var alpha = i / totalHeight;
 				// current segment height to overall segment height 
-				var beta = (float)(i - (secondHalf ? second.y - first.y : 0)) / segmentHeight;
+				var beta = (i - (secondHalf ? second.y - first.y : 0)) / segmentHeight;
 				// find current intersection point between scaline and first-to-third side
 				var A = first + (third - first) * alpha;
 				// find current intersection point between scanline and first-tosecond (or second-to-third) side
