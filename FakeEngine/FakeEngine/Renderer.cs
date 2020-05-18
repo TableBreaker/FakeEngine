@@ -499,7 +499,7 @@ namespace FakeEngine
 								break;
 							case LightMode.PHONG:
 								// Phong model shading normal interpolation
-								fragNormal = (firstNorm * coordinates.x + secondNorm * coordinates.y * thirdNorm * coordinates.z).normalized;
+								fragNormal = (firstNorm * coordinates.x + secondNorm * coordinates.y + thirdNorm * coordinates.z).normalized;
 								break;
 						}
 

@@ -4,12 +4,12 @@ using FakeEngine.Mathematics;
 
 namespace FakeEngine.Render
 {
+    public enum Shape { CUBE, PYRAMID, SPHERE, OCTAHEDRON, TETRAHEDRON };
+
     class Shapes
     {
         public const float DEFAULT_RADIUS = 2f;
         public const int DEFAULT_PRECISION_LEVEL = 3;
-
-        public enum Shape { CUBE, PYRAMID, SPHERE, OCTAHEDRON, TETRAHEDRON };
 
         public RenderObject GenerateObject(Shape objShape, int precision = DEFAULT_PRECISION_LEVEL)
         {

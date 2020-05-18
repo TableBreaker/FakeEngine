@@ -1,18 +1,22 @@
 follow https://github.com/oeshiro/gdi-3d-renderer
 
-**keyboard:**
+##keys
+
 ---
-* w : move forward
-* s : move back
-* a : move left
-* d : move right
-* q : move down
-* e : move up
 
-* u : rotate pitch
-* i : rotate yaw
-* o : rotate roll
+###### W : move forward
+###### S : move back
+###### A : move left
+###### D : move right
+###### Q : move down
+###### E : move up
 
-* b : both wireframe and solid
-* n : wireframe only
-* m : solid only
+###### U : rotate pitch
+###### I : rotate yaw
+###### O : rotate roll
+
+###### B : both wireframe and solid
+###### N : wireframe only
+###### M : solid only
+
+###### C : change object

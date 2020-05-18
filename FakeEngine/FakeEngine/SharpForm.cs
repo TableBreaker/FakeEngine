@@ -15,6 +15,7 @@ namespace FakeEngine
             _bitmap = new Bitmap(ClientSize.Width, ClientSize.Height);
             _pictureBox.Image = _bitmap;
             _renderer = new Renderer(Graphics.FromImage(_bitmap), 800, 450);
+            _shapes = new Shapes();
             InitScene();
             SetScene();
         }
@@ -22,6 +23,16 @@ namespace FakeEngine
         protected override void OnKeyDown(KeyEventArgs e)
         {
             base.OnKeyDown(e);
+
+            if (e.KeyCode == Keys.Escape)
+            {
+                Close();
+            }
+
+            if (e.KeyCode == Keys.C)
+            {
+                ChangeObject();
+            }
 
             Vector3 translate = Vector3.Zero;
             Vector3 rotate = Vector3.Zero;
@@ -89,6 +100,14 @@ namespace FakeEngine
 
         }
 
+        private void ChangeObject()
+        {
+            _objShape = _objShape + 1 > Shape.TETRAHEDRON ? Shape.CUBE : _objShape + 1;
+            var obj = _shapes.GenerateObject(_objShape);
+            _mainScene.DeleteObject();
+            _mainScene.AddObject(obj);
+        }
+
         private void MoveObject(Vector3 translate)
         {
             var pos = _mainScene.GetObjectPosition(false);
@@ -112,8 +131,7 @@ namespace FakeEngine
 
         private void InitScene()
         {
-            var shape = new Shapes();
-            var obj = shape.GenerateObject(Shapes.Shape.CUBE);
+            var obj = _shapes.GenerateObject(_objShape);
             _mainScene.AddObject(obj);
             _mainScene.SetLightColor(Color.White);
             obj.SetMaterialColor(Vector4.One);
@@ -165,5 +183,7 @@ namespace FakeEngine
         private Renderer _renderer;
         private PictureBox _pictureBox;
         private Bitmap _bitmap;
+        private Shapes _shapes;
+        private Shape _objShape = Shape.CUBE;
     }
 }
