@@ -1,7 +1,6 @@
 follow https://github.com/oeshiro/gdi-3d-renderer
 
-##keys
-
+keys
 ---
 
 ###### W : move forward
